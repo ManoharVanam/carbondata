@@ -3097,7 +3097,7 @@ class AllDataTypesTestCaseAggregate extends QueryTest with BeforeAndAfterAll {
       sql("select percentile_approx(1, 0.5 ,700) from Carbon_automation_test"),
       Seq(Row(1.0)))
   })
-
+/*
   //TC_484
   test("select percentile_approx(1, 0.5 ,500) from Carbon_automation_test")({
     checkAnswer(
@@ -3140,7 +3140,7 @@ class AllDataTypesTestCaseAggregate extends QueryTest with BeforeAndAfterAll {
     checkAnswer(
       sql("select covar_samp(gamePointId, contractNumber) from Carbon_automation_test"),
       Seq(Row(-1.3517990288086496E7)))
-  })
+  })*/
 
 
   //TC_484
