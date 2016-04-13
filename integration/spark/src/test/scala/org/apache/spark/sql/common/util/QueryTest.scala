@@ -92,6 +92,22 @@ class QueryTest extends PlanTest {
   protected def checkAnswer(df: DataFrame, expectedAnswer: DataFrame): Unit = {
     checkAnswer(df, expectedAnswer.collect())
   }
+  
+  /**
+   * validates results of csv files
+   */
+  def validateResult(df:DataFrame, expected:String): Unit = {
+  val compareCSV=false;
+  val actualpath="./src/test/resources/result.csv";
+  val dfu = new DataFrameUtil(df);
+  dfu.writeDataFrameResulttoCSVFile(actualpath);
+  val compare=new CsvCompare();
+  val result = compare.compareCSVWithFailureReason("./src/test/resources/hiveExpected/"+expected, actualpath)
+  result match {
+  case "true" => 
+  case errorMessage => fail(errorMessage)
+  }
+  }
 }
 
 object QueryTest {
