@@ -32,8 +32,8 @@ import org.scalatest.BeforeAndAfterAll
 class IntegerDataTypeTestCase extends QueryTest with BeforeAndAfterAll {
 
   override def beforeAll {
-    sql("CREATE CUBE integertypecube DIMENSIONS (empno Integer, workgroupcategory Integer, deptno Integer, projectcode Integer) MEASURES (attendance Integer) OPTIONS (PARTITIONER [PARTITION_COUNT=1])")
-    sql("LOAD DATA fact from './src/test/resources/data.csv' INTO CUBE integertypecube PARTITIONDATA(DELIMITER ',', QUOTECHAR '\"')")
+//    sql("CREATE CUBE integertypecube DIMENSIONS (empno Integer, workgroupcategory Integer, deptno Integer, projectcode Integer) MEASURES (attendance Integer) OPTIONS (PARTITIONER [PARTITION_COUNT=1])")
+//    sql("LOAD DATA fact from './src/test/resources/data.csv' INTO CUBE integertypecube PARTITIONDATA(DELIMITER ',', QUOTECHAR '\"')")
   sql("CREATE CUBE cube_restructure444 DIMENSIONS (a0 STRING) MEASURES (b0 INTEGER) OPTIONS (AGGREGATION [b0 = count] PARTITIONER [CLASS = 'org.carbondata.integration.spark.partition.api.impl.SampleDataPartitionerImpl', COLUMNS= (a0) ,PARTITION_COUNT=1] )")
     sql("LOAD DATA FACT FROM './src/test/resources/restructure_cube.csv' INTO CUBE cube_restructure444 PARTITIONDATA(DELIMITER ',', QUOTECHAR  '\"')")
     sql("create schema myschema")
@@ -44,7 +44,7 @@ class IntegerDataTypeTestCase extends QueryTest with BeforeAndAfterAll {
 
   
   override def afterAll {
-    sql("drop cube integertypecube")
+//    sql("drop cube integertypecube")
        sql("drop cube cube_restructure444")
       sql("drop schema myschema")
       sql("drop schema myschema1")
@@ -52,11 +52,11 @@ class IntegerDataTypeTestCase extends QueryTest with BeforeAndAfterAll {
 
   }
   
-  test("select empno from integertypecube") {
+/*  test("select empno from integertypecube") {
     checkAnswer(
       sql("select empno from integertypecube"),
       Seq(Row(11), Row(12), Row(13), Row(14), Row(15), Row(16), Row(17), Row(18), Row(19), Row(20)))
-  }
+  }*/
   
   
  //TC_898
