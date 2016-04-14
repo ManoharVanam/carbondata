@@ -32,8 +32,8 @@ import org.scalatest.BeforeAndAfterAll
 class NumericDataTypeTestCase extends QueryTest with BeforeAndAfterAll {
 
   override def beforeAll {
-    sql("CREATE CUBE doubletype DIMENSIONS (utilization Numeric,salary Numeric) OPTIONS (PARTITIONER [PARTITION_COUNT=1])")
-    sql("LOAD DATA fact from './src/test/resources/data.csv' INTO CUBE doubletype PARTITIONDATA(DELIMITER ',', QUOTECHAR '\"')")
+    //sql("CREATE CUBE doubletype DIMENSIONS (utilization Numeric,salary Numeric) OPTIONS (PARTITIONER [PARTITION_COUNT=1])")
+    //sql("LOAD DATA fact from './src/test/resources/data.csv' INTO CUBE doubletype PARTITIONDATA(DELIMITER ',', QUOTECHAR '\"')")
   
  sql("create cube myvmallTest dimensions(imei String,uuid String,MAC String,device_color String,device_shell_color String,device_name String,product_name String,ram String,rom String,cpu_clock String,series String,check_date String,check_year Integer,check_month Integer ,check_day Integer,check_hour Integer,bom String,inside_name String,packing_date String,packing_year String,packing_month String,packing_day String,packing_hour String,customer_name String,deliveryAreaId String,deliveryCountry String,deliveryProvince String,deliveryCity String,deliveryDistrict String,packing_list_no String,order_no String,Active_check_time String,Active_check_year Integer,Active_check_month Integer,Active_check_day Integer,Active_check_hour Integer,ActiveAreaId String,ActiveCountry String,ActiveProvince String,Activecity String,ActiveDistrict String,Active_network String,Active_firmware_version String,Active_emui_version String,Active_os_version String,Latest_check_time String,Latest_check_year Integer,Latest_check_month Integer,Latest_check_day Integer,Latest_check_hour Integer,Latest_areaId String,Latest_country String,Latest_province String,Latest_city String,Latest_district String,Latest_firmware_version String,Latest_emui_version String,Latest_os_version String,Latest_network String,site String,site_desc String,product String,product_desc String) OPTIONS (PARTITIONER [CLASS = 'org.carbondata.integration.spark.partition.api.impl.SampleDataPartitionerImpl' ,columns= (imei) ,PARTITION_COUNT=3] )")
     sql("LOAD DATA fact from './src/test/resources/100_VMALL_1_Day_DATA_2015-09-15.csv' INTO CUBE myvmallTest PARTITIONDATA(DELIMITER ',', QUOTECHAR '\"', FILEHEADER 'imei,uuid,MAC,device_color,device_shell_color,device_name,product_name,ram,rom,cpu_clock,series,check_date,check_year,check_month,check_day,check_hour,bom,inside_name,packing_date,packing_year,packing_month,packing_day,packing_hour,customer_name,deliveryAreaId,deliveryCountry,deliveryProvince,deliveryCity,deliveryDistrict,packing_list_no,order_no,Active_check_time,Active_check_year,Active_check_month,Active_check_day,Active_check_hour,ActiveAreaId,ActiveCountry,ActiveProvince,Activecity,ActiveDistrict,Active_network,Active_firmware_version,Active_emui_version,Active_os_version,Latest_check_time,Latest_check_year,Latest_check_month,Latest_check_day,Latest_check_hour,Latest_areaId,Latest_country,Latest_province,Latest_city,Latest_district,Latest_firmware_version,Latest_emui_version,Latest_os_version,Latest_network,site,site_desc,product,product_desc')")
@@ -41,17 +41,17 @@ class NumericDataTypeTestCase extends QueryTest with BeforeAndAfterAll {
   }
   
     override def afterAll {
-    sql("drop cube doubletype")
+//    sql("drop cube doubletype")
      sql("drop cube myvmallTest")
 
   }
 
-  test("select utilization from doubletype") {
+/*  test("select utilization from doubletype") {
     checkAnswer(
       sql("select utilization from doubletype"),
       Seq(Row(96.2), Row(95.1), Row(99.0), Row(92.2), Row(91.5),
         Row(93.0), Row(97.45), Row(98.23), Row(91.678), Row(94.22)))
-  }
+  }*/
   
   //VMALL_Per_TC_000
 test("select count(*) from    myvmallTest") ({
