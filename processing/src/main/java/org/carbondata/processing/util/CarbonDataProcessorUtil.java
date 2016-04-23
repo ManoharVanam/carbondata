@@ -47,7 +47,8 @@ import java.util.TreeSet;
 
 import org.carbondata.common.logging.LogService;
 import org.carbondata.common.logging.LogServiceFactory;
-import org.carbondata.core.carbon.CarbonDef;
+import org.carbondata.core.carbon.metadata.schema.table.CarbonTable;
+import org.carbondata.core.carbon.metadata.schema.table.column.CarbonDimension;
 import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.core.datastorage.store.compression.MeasureMetaDataModel;
 import org.carbondata.core.datastorage.store.filesystem.CarbonFile;
@@ -1123,9 +1124,11 @@ public final class CarbonDataProcessorUtil {
     return null;
   }
 
-  public static String[] getReorderedLevels(CarbonDef.Schema schema, CarbonDef.Cube cube,
-      String[] aggreateLevels, String factTableName) {
-    String[] factDimensions = CarbonSchemaParser.getAllCubeDimensions(cube, schema);
+  public static String[] getReorderedLevels(CarbonTable table, String[] aggreateLevels,
+      String factTableName) {
+    //  String[] factDimensions = CarbonSchemaParser.getAllCubeDimensions(cube, table);
+    String[] factDimensions = getFactTableDimensions(table, factTableName);
+
     String[] reorderedAggregateLevels = new String[aggreateLevels.length];
     int[] reorderIndex = new int[aggreateLevels.length];
     String aggLevel = null;
@@ -1146,6 +1149,22 @@ public final class CarbonDataProcessorUtil {
       reorderedAggregateLevels[i] = aggLevel;
     }
     return reorderedAggregateLevels;
+  }
+
+  /**
+   * returns all dimensions of given fact table
+   *
+   * @param table
+   * @param factTableName
+   * @return
+   */
+  private static String[] getFactTableDimensions(CarbonTable table, String factTableName) {
+    List<CarbonDimension> factDimensionList = table.getDimensionByTableName(factTableName);
+    String[] factDimensions = new String[factDimensionList.size()];
+    for (int index = 0; index < factDimensionList.size(); index++) {
+      factDimensions[index] = factTableName + '_' + factDimensionList.get(index).getColName();
+    }
+    return factDimensions;
   }
 
   /**

@@ -22,8 +22,9 @@ import java.net.{InetAddress, InterfaceAddress, NetworkInterface}
 import java.util.{GregorianCalendar, HashMap}
 
 import scala.Array.canBuildFrom
+// import scala.collection.JavaConversions._
 import scala.collection.JavaConverters._
-import scala.collection.mutable.ArrayBuffer
+import scala.collection.mutable.{ArrayBuffer, ListBuffer}
 import scala.language.implicitConversions
 import scala.util.parsing.combinator.RegexParsers
 
@@ -40,6 +41,7 @@ import org.carbondata.core.carbon.{CarbonDef, CarbonTableIdentifier}
 import org.carbondata.core.carbon.metadata.CarbonMetadata
 import org.carbondata.core.carbon.metadata.converter.ThriftWrapperSchemaConverterImpl
 import org.carbondata.core.carbon.metadata.schema.table.CarbonTable
+import org.carbondata.core.carbon.metadata.schema.table.column.{CarbonDimension, CarbonMeasure}
 import org.carbondata.core.carbon.path.{CarbonStorePath, CarbonTablePath}
 import org.carbondata.core.constants.CarbonCommonConstants
 import org.carbondata.core.datastorage.store.fileperations.{AtomicFileOperationsImpl, FileWriteOperation}
@@ -55,6 +57,7 @@ import org.carbondata.integration.spark.load.CarbonLoaderUtil
 import org.carbondata.integration.spark.util.CarbonScalaUtil.CarbonSparkUtil
 import org.carbondata.processing.util.CarbonDataProcessorUtil
 import org.carbondata.query.util.CarbonEngineLogEvent
+
 
 case class MetaData(var cubesMeta: ArrayBuffer[TableMeta])
 
@@ -472,25 +475,26 @@ class CarbonMetastoreCatalog(hive: HiveContext, val storePath: String, client: C
     updateCube(schema, aggTablesGen)(sqlContext)
   }
 
-  def validateAndGetNewAggregateColsList(schema: CarbonDef.Schema,
-                                         aggregateAttributes: List[AggregateTableAttributes]):
-                                        List[AggregateTableAttributes] = {
-    val dimensions = schema.cubes(0).dimensions
-    val measures = schema.cubes(0).measures
+  def validateAndGetNewAggregateColsList(table: CarbonTable,
+    aggregateAttributes: List[AggregateTableAttributes],
+    factTableName: String): List[AggregateTableAttributes] = {
+    val dimensions = table.getDimensionByTableName(factTableName).asScala
+    val measures = table.getMeasureByTableName(factTableName).asScala
     var aggColsArray = Array[AggregateTableAttributes]()
     aggregateAttributes.foreach { aggCol =>
       var found = false
       val colName = aggCol.colName
-      dimensions.foreach { dimension =>
-        if (dimension.name.toLowerCase().equals(colName.toLowerCase())) {
-          aggColsArray :+= AggregateTableAttributes(dimension.name, aggCol.aggType)
+      dimensions.foreach{ dimension =>
+        if (dimension.getColName.toLowerCase().equals(colName.toLowerCase())) {
+          aggColsArray :+= AggregateTableAttributes(dimension.getColName, aggCol.aggType)
           found = true
         }
       }
+
       if (!found) {
-        measures.foreach { measure =>
-          if (measure.name.toLowerCase().equals(colName.toLowerCase())) {
-            aggColsArray :+= AggregateTableAttributes(measure.name, aggCol.aggType)
+        measures.foreach{ measure =>
+          if (measure.getColName.toLowerCase().equals(colName.toLowerCase())) {
+            aggColsArray :+= AggregateTableAttributes(measure.getColName, aggCol.aggType)
             found = true
           }
         }
@@ -529,17 +533,21 @@ class CarbonMetastoreCatalog(hive: HiveContext, val storePath: String, client: C
       .asInstanceOf[CarbonDef.Table].aggTables
   }
 
-  def updateCubeWithAggregates(schema: CarbonDef.Schema, schemaName: String = null,
-                               cubeName: String, aggTableName: String,
-                               aggColsList: List[AggregateTableAttributes]): CarbonDef.Schema = {
-    var cube = org.carbondata.core.metadata.CarbonMetadata.getInstance()
-      .getCube(schemaName + "_" + cubeName)
+  def updateCubeWithAggregates(table: CarbonTable,
+    schemaName: String = null,
+    cubeName: String,
+    aggTableName: String,
+    aggColsList: List[AggregateTableAttributes]): CarbonTable = {
+    var cube = org.carbondata.core.carbon.metadata.CarbonMetadata.getInstance()
+      .getCarbonTable(schemaName + "_" + cubeName)
     if (null == cube) {
       throw new Exception("Missing metadata for the aggregate table: " + aggTableName)
     }
-    val aggregateAttributes = validateAndGetNewAggregateColsList(schema, aggColsList)
-    var aggTableColumns = getDimensions(
-      CarbonMetadata.getInstance().getCarbonTable(schemaName + "_" + cubeName), aggregateAttributes)
+    val aggregateAttributes = validateAndGetNewAggregateColsList(table,
+      aggColsList,
+      cube.getFactTableName
+    )
+    var aggTableColumns = getDimensions(cube, aggregateAttributes)
     if (aggTableColumns.length == 0) {
       LOGGER.audit(
         s"Failed to create the aggregate table $aggTableName for cube $schemaName.$cubeName. " +
@@ -549,19 +557,20 @@ class CarbonMetastoreCatalog(hive: HiveContext, val storePath: String, client: C
         s"Please provide at least one valid dimension name to create aggregate table successfully")
     }
     aggTableColumns = CarbonDataProcessorUtil
-      .getReorderedLevels(schema, schema.cubes(0), aggTableColumns, cube.getFactTableName)
-    schema.cubes(0).autoAggregationType = "auto"
-    var aggDims = Array[CarbonDef.AggMeasure]()
-    var msrs = Array[CarbonDef.AggMeasure]()
+      .getReorderedLevels(table, aggTableColumns, cube.getFactTableName)
+    table.autoAggregationType = "auto"
+    var aggDims = Array[org.carbondata.core.carbon.metadata.schema.table.column.CarbonMeasure]()
+    var msrs = Array[org.carbondata.core.carbon.metadata.schema.table.column.CarbonMeasure]()
     aggregateAttributes.filter(agg => null != agg.aggType).foreach { measure =>
       val mondAggMsr = new CarbonDef.AggMeasure
       val name = measure.colName
-      if (null != cube.getMeasure(cube.getFactTableName(), name)) {
-        mondAggMsr.name = s"[Measures].[$name]"
-        mondAggMsr.column = name
+      val aggMsr = cube.getMeasureByName(cube.getFactTableName(), name)
+      if (null != aggMsr) {
+        var columnSchema = aggMsr.getColumnSchema
         val aggType = measure.aggType
-        mondAggMsr.aggregator = aggType
-        if (msrs.contains(mondAggMsr)) {
+        columnSchema.setAggregateFunction(measure.aggType)
+        val carbonAggMsr = new CarbonMeasure(columnSchema, aggMsr.getOrdinal)
+        if (msrs.contains(carbonAggMsr)) {
           LOGGER.audit(
             s"Failed to create the aggregate table $aggTableName for cube $schemaName.$cubeName. " +
               s"Duplicate column with same aggregate function.")
@@ -569,20 +578,18 @@ class CarbonMetastoreCatalog(hive: HiveContext, val storePath: String, client: C
             s"Duplicate column with same aggregate function. " +
               s"Cannot create an aggregate table :: $name :: $aggType")
         }
-        msrs :+= mondAggMsr
+        msrs :+= carbonAggMsr
       }
       else {
-        val dimension = cube.getDimension(name, cube.getFactTableName())
+        val dimension = cube.getDimensionByName(cube.getFactTableName(), name)
+
         if (null == dimension) sys
           .error(s"Invalid column name. Cannot create an aggregate table :: $name")
-        val dimName = dimension.getDimName()
-        val hierName = dimension.getHierName()
-        val levelName = dimension.getName()
-        mondAggMsr.name = s"[$dimName].[$hierName].[$levelName]"
-        mondAggMsr.column = name
+        var dimColSchema = dimension.getColumnSchema
         val aggType = measure.aggType
-        mondAggMsr.aggregator = aggType
-        if (aggDims.contains(mondAggMsr)) {
+        dimColSchema.setAggregateFunction(aggType)
+        var carbonAggMsr = new CarbonMeasure(dimColSchema, dimension.getOrdinal)
+        if (aggDims.contains(carbonAggMsr)) {
           LOGGER.audit(
             s"Failed to create the aggregate table $aggTableName for cube $schemaName.$cubeName. " +
               s"Duplicate column with same aggregate function.")
@@ -590,7 +597,7 @@ class CarbonMetastoreCatalog(hive: HiveContext, val storePath: String, client: C
             s"Duplicate column with same aggregate function. " +
               s"Cannot create an aggregate table :: $name :: $aggType")
         }
-        aggDims :+= mondAggMsr
+        aggDims :+= carbonAggMsr
       }
     }
 
@@ -599,26 +606,28 @@ class CarbonMetastoreCatalog(hive: HiveContext, val storePath: String, client: C
     val mondAgg = new CarbonDef.AggName()
     mondAgg.name = aggTableName
     val bufferOfCarbonAggName = new ArrayBuffer[CarbonDef.AggName]
-    val list = org.carbondata.core.metadata.CarbonMetadata.getInstance()
-      .getAggLevelsForAggTable(cube, aggTableName, aggTableColumns.toList.asJava)
-    val array = list.asScala;
-    mondAgg.levels = array.toArray
-    mondAgg.measures = aggMsrs
-    val factCount = new CarbonDef.AggFactCount
-    factCount.column = schema.cubes(0).fact.asInstanceOf[CarbonDef.Table].name + "_count"
-    mondAgg.factcount = factCount
-    if (CarbonLoaderUtil.aggTableAlreadyExistWithSameMeasuresndLevels(mondAgg,
-      schema.cubes(0).fact.asInstanceOf[CarbonDef.Table].aggTables)) {
+    // val list = org.carbondata.core.metadata.CarbonMetadata.getInstance()
+    // .getAggLevelsForAggTable(cube, aggTableName, aggTableColumns.toList)
+    val dimList = new ListBuffer[CarbonDimension]()
+    aggTableColumns.foreach(colName => {
+      dimList += table.getDimensionByName(table.getFactTableName, colName)
+    }
+    )
+
+    if (CarbonLoaderUtil
+      .aggTableAlreadyExistWithSameMeasuresndLevels(table, dimList.asJava, aggMsrs.toList.asJava)) {
+
       LOGGER.audit(
         s"Failed to create the aggregate table $aggTableName for cube $schemaName.$cubeName. " +
           s"Already an aggregate table exists with same columns")
       sys.error(s"Already an aggregate table exists with same columns")
     }
-    bufferOfCarbonAggName += mondAgg
-    schema.cubes(0).fact.asInstanceOf[CarbonDef.Table].aggTables = (
-      schema.cubes(0).fact.asInstanceOf[CarbonDef.Table].aggTables.toSeq ++ bufferOfCarbonAggName)
-      .toArray
-    return schema
+    table.addTableDimensions(table.getFactTableName, dimList.asJava)
+    table.addTableMeasures(table.getFactTableName, aggMsrs.toList.asJava)
+    // bufferOfCarbonAggName.add(mondAgg)
+    // table.cubes(0).fact.asInstanceOf[CarbonDef.Table].aggTables = (table.cubes(0).fact
+    // .asInstanceOf[CarbonDef.Table].aggTables.toSeq ++ bufferOfCarbonAggName).toArray
+    return table
   }
 
   def getAggregateTableName(carbonTable: CarbonTable, factTableName: String): String = {

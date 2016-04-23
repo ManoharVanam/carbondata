@@ -147,4 +147,13 @@ public class CarbonColumn implements Serializable {
     return columnSchema.isComplex();
   }
 
+
+  /**
+   * returns column schema
+   *
+   * @return
+   */
+  public ColumnSchema getColumnSchema() {
+    return columnSchema;
+  }
 }

@@ -50,11 +50,11 @@ import org.carbondata.core.carbon.CarbonDataLoadSchema;
 import org.carbondata.core.carbon.CarbonDef;
 import org.carbondata.core.carbon.CarbonDef.AggLevel;
 import org.carbondata.core.carbon.CarbonDef.AggMeasure;
-import org.carbondata.core.carbon.CarbonDef.AggName;
 import org.carbondata.core.carbon.CarbonDef.AggTable;
 import org.carbondata.core.carbon.CarbonDef.CubeDimension;
 import org.carbondata.core.carbon.CarbonDef.Schema;
 import org.carbondata.core.carbon.CarbonTableIdentifier;
+import org.carbondata.core.carbon.metadata.schema.table.CarbonTable;
 import org.carbondata.core.carbon.metadata.schema.table.column.CarbonDimension;
 import org.carbondata.core.carbon.metadata.schema.table.column.CarbonMeasure;
 import org.carbondata.core.carbon.path.CarbonStorePath;
@@ -433,52 +433,78 @@ public final class CarbonLoaderUtil {
     }
   }
 
-  public static boolean aggTableAlreadyExistWithSameMeasuresndLevels(AggName aggName,
-      AggTable[] aggTables) {
-    AggMeasure[] aggMeasures = null;
-    AggLevel[] aggLevels = null;
-    for (int i = 0; i < aggTables.length; i++) {
-      aggLevels = aggTables[i].levels;
-      aggMeasures = aggTables[i].measures;
-      if (aggLevels.length == aggName.levels.length
-          && aggMeasures.length == aggName.measures.length) {
-        if (checkforLevels(aggLevels, aggName.levels) && checkforMeasures(aggMeasures,
-            aggName.measures)) {
+  /**
+   * returns true if aggTableAlreadyExistWithSameMeasuresndLevels
+   *
+   * @param table
+   * @param dimList
+   * @param mesrList
+   * @return
+   */
+  public static boolean aggTableAlreadyExistWithSameMeasuresndLevels(CarbonTable table,
+      List<CarbonDimension> dimList, List<CarbonMeasure> mesrList) {
+    List<CarbonMeasure> aggMeasures = null;
+    List<CarbonDimension> aggLevels = null;
+    for (String aggTableName : table.getDimensionKeySet()) {
+      aggMeasures = table.getMeasureByTableName(aggTableName);
+      aggLevels = table.getDimensionByTableName(aggTableName);
+      if (aggLevels.size() == dimList.size() && aggMeasures.size() == mesrList.size()) {
+        if (checkforLevels(aggLevels, dimList) && checkforMeasures(aggMeasures, mesrList)) {
           return true;
         }
       }
+
     }
     return false;
   }
 
-  private static boolean checkforLevels(AggLevel[] aggTableLevels, AggLevel[] newTableLevels) {
+  /**
+   * returns true if given table dimensions matches with existing table dimensions,
+   * false otherwise
+   *
+   * @param aggTableLevels
+   * @param newTableLevels
+   * @return
+   */
+  private static boolean checkforLevels(List<CarbonDimension> aggTableLevels,
+      List<CarbonDimension> newTableLevels) {
     int count = 0;
-    for (int i = 0; i < aggTableLevels.length; i++) {
-      for (int j = 0; j < newTableLevels.length; j++) {
-        if (aggTableLevels[i].name.equals(newTableLevels[j].name)) {
+    for (CarbonDimension aggTableLevel : aggTableLevels) {
+      for (CarbonDimension newTableLevel : newTableLevels) {
+        if (aggTableLevel.getColName().equals(newTableLevel.getColName())) {
           count++;
           break;
         }
       }
     }
-    if (count == aggTableLevels.length) {
+    if (count == aggTableLevels.size()) {
       return true;
     }
     return false;
   }
 
-  private static boolean checkforMeasures(AggMeasure[] aggMeasures, AggMeasure[] newTableMeasures) {
+  /**
+   * returns true if given table measures matches with existing table measures,
+   * false otherwise
+   *
+   * @param aggMeasures
+   * @param newTableMeasures
+   * @return
+   */
+  private static boolean checkforMeasures(List<CarbonMeasure> aggMeasures,
+      List<CarbonMeasure> newTableMeasures) {
     int count = 0;
-    for (int i = 0; i < aggMeasures.length; i++) {
-      for (int j = 0; j < newTableMeasures.length; j++) {
-        if (aggMeasures[i].name.equals(newTableMeasures[j].name) && aggMeasures[i].aggregator
-            .equals(newTableMeasures[j].aggregator)) {
+    for (CarbonMeasure aggMeasure : aggMeasures) {
+      for (CarbonMeasure newTableMeasure : newTableMeasures) {
+        if (aggMeasure.getColName().equals(newTableMeasure.getColName()) && aggMeasure
+            .getColumnSchema().getAggregateFunction()
+            .equals(newTableMeasure.getColumnSchema().getAggregateFunction())) {
           count++;
           break;
         }
       }
     }
-    if (count == aggMeasures.length) {
+    if (count == aggMeasures.size()) {
       return true;
     }
     return false;

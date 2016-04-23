@@ -37,7 +37,7 @@ import org.carbondata.core.carbon.CarbonDef.{AggTable, CubeDimension}
 import org.carbondata.core.carbon.metadata.datatype.DataType
 import org.carbondata.core.carbon.metadata.encoder.Encoding
 import org.carbondata.core.carbon.metadata.schema.{SchemaEvolution, SchemaEvolutionEntry}
-import org.carbondata.core.carbon.metadata.schema.table.{TableInfo, TableSchema}
+import org.carbondata.core.carbon.metadata.schema.table.{CarbonTable, TableInfo, TableSchema}
 import org.carbondata.core.carbon.metadata.schema.table.column.ColumnSchema
 import org.carbondata.core.constants.CarbonCommonConstants
 import org.carbondata.core.datastorage.store.impl.FileFactory
@@ -1999,7 +1999,7 @@ private[sql] case class LoadCube(
 
 private[sql] case class AddAggregatesToCube(
                                              schemaNameOp: Option[String],
-                                             cubeName: String,
+                                             tableName: String,
                                              aggregateAttributes: Seq[AggregateTableAttributes])
   extends RunnableCommand {
 
@@ -2009,13 +2009,13 @@ private[sql] case class AddAggregatesToCube(
   def run(sqlContext: SQLContext): Seq[Row] = {
     val schemaName = getDB.getDatabaseName(schemaNameOp, sqlContext)
     val relation = CarbonEnv.getInstance(sqlContext).carbonCatalog
-      .lookupRelation1(Option(schemaName), cubeName, None)(sqlContext).asInstanceOf[CarbonRelation]
-    if (relation == null) sys.error(s"Cube $schemaName.$cubeName does not exist")
+      .lookupRelation1(Option(schemaName), tableName, None)(sqlContext).asInstanceOf[CarbonRelation]
+    if (relation == null) sys.error(s"Cube $schemaName.$tableName does not exist")
     if (aggregateAttributes.size == 0) sys.error(
       s"No columns found in the query. Please provide the valid " +
         s"column names to create an aggregate table successfully")
     val carbonLock = CarbonLockFactory.getCarbonLockObj(
-      CarbonMetadata.getInstance().getCube(schemaName + "_" + cubeName).getMetaDataFilepath(),
+      CarbonMetadata.getInstance().getCube(schemaName + "_" + tableName).getMetaDataFilepath(),
       LockUsage.METADATA_LOCK)
     try {
       if (carbonLock.lockWithRetries()) {
@@ -2028,8 +2028,10 @@ private[sql] case class AddAggregatesToCube(
         .getAggregateTableName(relation.cubeMeta.carbonTable,
           relation.cubeMeta.carbonTable.getFactTableName)
       LOGGER.audit(s"The aggregate table creation request has been received :: $aggTableName")
-      var cube = CarbonMetadata.getInstance().getCube(schemaName + "_" + cubeName)
-      val path = cube.getMetaDataFilepath()
+      // var cube = CarbonMetadata.getInstance().getCube(schemaName + "_" + cubeName)
+      var carbonTable = org.carbondata.core.carbon.metadata.CarbonMetadata.getInstance()
+        .getCarbonTable(schemaName + "_" + tableName)
+      val path = carbonTable.getMetaDataFilepath()
 
       val fileType = FileFactory.getFileType(path)
       val file = FileFactory.getCarbonFile(path, fileType)
@@ -2039,9 +2041,13 @@ private[sql] case class AddAggregatesToCube(
       val mondSchema = CarbonMetastoreCatalog.parseStringToSchema(schema1)
 
       val schema = CarbonEnv.getInstance(sqlContext).carbonCatalog
-        .updateCubeWithAggregates(mondSchema, schemaName, cubeNameInSchema, aggTableName,
-          aggregateAttributes.toList)
-      LoadAggregationTable(schema, schemaName, cubeNameInSchema, aggTableName).run(sqlContext)
+        .updateCubeWithAggregates(carbonTable,
+          schemaName,
+          tableName,
+          aggTableName,
+          aggregateAttributes.toList
+        )
+      LoadAggregationTable(schema, schemaName, tableName, aggTableName).run(sqlContext)
       // TODO: Need to handle this case with carbonTable
       LOGGER.audit(s"The aggregate table creation request is successful :: $aggTableName")
     } finally {
@@ -2076,24 +2082,25 @@ private[sql] case class PartitionData(schemaName: String, cubeName: String, fact
 }
 
 private[sql] case class LoadAggregationTable(
-                                              newSchema: CarbonDef.Schema,
+                                              carbonTable: CarbonTable,
                                               schemaName: String,
-                                              cubeName: String,
+                                              tableName: String,
                                               aggTableName: String) extends RunnableCommand {
 
   def run(sqlContext: SQLContext): Seq[Row] = {
     val relation = CarbonEnv.getInstance(sqlContext).carbonCatalog.lookupRelation1(
       Option(schemaName),
-      cubeName,
+      tableName,
       None)(sqlContext).asInstanceOf[CarbonRelation]
-    if (relation == null) sys.error(s"Cube $schemaName.$cubeName does not exist")
+    if (relation == null) sys.error(s"Cube $schemaName.$tableName does not exist")
     val carbonLoadModel = new CarbonLoadModel()
-    carbonLoadModel.setTableName(cubeName)
+    carbonLoadModel.setTableName(tableName)
     carbonLoadModel.setDatabaseName(schemaName)
     val table = relation.cubeMeta.carbonTable
     carbonLoadModel.setAggTableName(aggTableName)
     carbonLoadModel.setTableName(table.getFactTableName)
-    carbonLoadModel.setSchema(newSchema);
+   // carbonLoadModel.setSchema(newSchema);
+    carbonLoadModel.setCarbonDataLoadSchema(new CarbonDataLoadSchema(carbonTable))
     carbonLoadModel.setAggLoadRequest(true)
     var storeLocation = CarbonProperties.getInstance
       .getProperty(CarbonCommonConstants.STORE_LOCATION_TEMP_PATH,
