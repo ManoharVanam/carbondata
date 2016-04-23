@@ -22,13 +22,16 @@ package org.carbondata.core.carbon.metadata.schema.table;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.carbondata.core.carbon.metadata.encoder.Encoding;
 import org.carbondata.core.carbon.metadata.schema.table.column.CarbonDimension;
 import org.carbondata.core.carbon.metadata.schema.table.column.CarbonMeasure;
 import org.carbondata.core.carbon.metadata.schema.table.column.ColumnSchema;
+import org.carbondata.core.constants.CarbonCommonConstants;
 
 /**
  * Mapping class for Carbon actual table
@@ -79,6 +82,17 @@ public class CarbonTable implements Serializable {
    * last updated time
    */
   private long tableLastUpdatedTime;
+
+  /**
+   * Auto Aggregation Type
+   */
+  public String autoAggregationType;
+
+  /**
+   * TableName, columns list [Meta data i.e. from original database]
+   */
+  private Map<String, Set<String>> metaTables =
+      new HashMap<String, Set<String>>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
 
   public CarbonTable() {
     this.tableDimensionsMap = new HashMap<String, List<CarbonDimension>>();
@@ -340,6 +354,22 @@ public class CarbonTable implements Serializable {
   }
 
   /**
+   * gets metaTables set
+   *
+   * @param table
+   * @return
+   */
+  public Set<String> getMetaTableColumns(String table) {
+    Set<String> columns = metaTables.get(table);
+
+    if (columns == null) {
+      columns = new LinkedHashSet<String>();
+      metaTables.put(table, columns);
+    }
+    return columns;
+  }
+
+  /**
    * @param databaseName
    */
   public void setDatabaseName(String databaseName) {
@@ -353,6 +383,28 @@ public class CarbonTable implements Serializable {
     this.factTableName = factTableName;
   }
 
+  /**
+   * @param tableName
+   * @param measureList
+   */
+  public void addTableMeasures(String tableName, List<CarbonMeasure> measureList) {
+    tableMeasuresMap.put(tableName, measureList);
+  }
+
+  public void addTableDimensions(String tableName, List<CarbonDimension> dimensionList) {
+    tableDimensionsMap.put(tableName, dimensionList);
+  }
+
+  /**
+   * @return
+   */
+  public int getDimensioMapSize() {
+    return tableDimensionsMap.size();
+  }
+
+  public Set<String> getDimensionKeySet() {
+    return tableDimensionsMap.keySet();
+  }
   /**
    * gets partition count for this table
    * TODO: to be implemented while supporting partitioning
