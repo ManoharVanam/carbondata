@@ -46,7 +46,7 @@ object CarbonHiveContext extends LocalSQLContext(
 }) {
 
   {
-    CarbonProperties.getInstance().addProperty("carbon.kettle.home", "../../processing/carbonplugins")
+    CarbonProperties.getInstance().addProperty("carbon.kettle.home", new File("./target/test/").getCanonicalPath+"/../../../processing/carbonplugins")
     CarbonProperties.getInstance().addProperty(CarbonCommonConstants.CARBON_TIMESTAMP_FORMAT, "dd-MM-yyyy")
     CarbonProperties.getInstance().addProperty(CarbonCommonConstants.STORE_LOCATION_TEMP_PATH, System.getProperty("java.io.tmpdir"))
 
