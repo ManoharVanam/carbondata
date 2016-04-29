@@ -435,14 +435,12 @@ object CarbonDataRDDFactory extends Logging {
           CarbonLoaderUtil.deleteSlice(partitioner.partitionCount, carbonLoadModel.getDatabaseName,
             carbonLoadModel.getTableName, carbonLoadModel.getTableName, hdfsStoreLocation,
             currentRestructNumber, newSlice)
-          val schema = carbonLoadModel.getSchema
-          val aggTables = schema.cubes(0).fact.asInstanceOf[CarbonDef.Table].aggTables
+          val aggTables = cube.getAggregateTablesName
           if (null != aggTables && !aggTables.isEmpty) {
-            aggTables.foreach { aggTable =>
-              val aggTableName = CarbonLoaderUtil.getAggregateTableName(aggTable)
+            aggTables.asScala.foreach { aggTable =>
               CarbonLoaderUtil
                 .deleteSlice(partitioner.partitionCount, carbonLoadModel.getDatabaseName,
-                  carbonLoadModel.getTableName, aggTableName, hdfsStoreLocation,
+                  carbonLoadModel.getTableName, aggTable, hdfsStoreLocation,
                   currentRestructNumber, newSlice)
             }
           }
