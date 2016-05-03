@@ -38,7 +38,7 @@ class AllDataTypesTestCaseSort extends QueryTest with BeforeAndAfterAll {
   override def beforeAll {
     val currentDirectory = new File(this.getClass.getResource("/").getPath + "/../../")
       .getCanonicalPath
-    CarbonProperties.getInstance().addProperty("carbon.direct.surrogate","abc")
+    CarbonProperties.getInstance().addProperty("carbon.direct.surrogate","false")
     sql("CREATE CUBE alldatatypescubeSort DIMENSIONS (empno Integer, empname String, designation String, doj Timestamp, workgroupcategory Integer, workgroupcategoryname String, deptno Integer, deptname String, projectcode Integer, projectjoindate Timestamp, projectenddate Timestamp) MEASURES (attendance Integer,utilization Integer,salary Integer) OPTIONS (PARTITIONER [PARTITION_COUNT=1])")
     sql("LOAD DATA fact from'"+currentDirectory+"/src/test/resources/data.csv' INTO CUBE alldatatypescubeSort PARTITIONDATA(DELIMITER ',', QUOTECHAR '\"')");
   }
@@ -50,6 +50,6 @@ class AllDataTypesTestCaseSort extends QueryTest with BeforeAndAfterAll {
   }
 
   override def afterAll {
-    sql("drop cube alldatatypescube")
+    sql("drop cube alldatatypescubeSort")
   }
 }

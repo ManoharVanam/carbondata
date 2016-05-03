@@ -191,7 +191,7 @@
                         <include>**/*Suite.java</include>
                     </includes>
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
-                    <argLine>-Xmx512m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=512m</argLine>
+                    <argLine>-Xmx20g -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=512m</argLine>
                     <systemProperties>
                         <java.awt.headless>true</java.awt.headless>
                     </systemProperties>
@@ -208,7 +208,7 @@
                     <reportsDirectory>${project.build.directory}/surefire-reports</reportsDirectory>
                     <junitxml>.</junitxml>
                     <filereports>CarbonTestSuite.txt</filereports>
-                    <argLine>-ea -Xmx512m -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=512m
+                    <argLine>-ea -Xmx20g -XX:MaxPermSize=512m -XX:ReservedCodeCacheSize=512m
                     </argLine>
                     <stderr/>
                     <environmentVariables>
