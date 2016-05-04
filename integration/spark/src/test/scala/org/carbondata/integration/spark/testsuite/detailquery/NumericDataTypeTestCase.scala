@@ -19,9 +19,12 @@
 
 package org.carbondata.integration.spark.testsuite.detailquery
 
+import java.io.File
+
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.common.util.CarbonHiveContext._
 import org.apache.spark.sql.common.util.QueryTest
+import org.carbondata.core.util.CarbonProperties
 import org.scalatest.BeforeAndAfterAll
 
 /**
@@ -32,8 +35,11 @@ import org.scalatest.BeforeAndAfterAll
 class NumericDataTypeTestCase extends QueryTest with BeforeAndAfterAll {
 
   override def beforeAll {
+    val currentDirectory = new File(this.getClass.getResource("/").getPath + "/../../")
+      .getCanonicalPath
+    CarbonProperties.getInstance().addProperty("carbon.direct.surrogate","false")
     sql("CREATE CUBE doubletype DIMENSIONS (utilization Numeric,salary Numeric) OPTIONS (PARTITIONER [PARTITION_COUNT=1])")
-    sql("LOAD DATA fact from './src/test/resources/data.csv' INTO CUBE doubletype PARTITIONDATA(DELIMITER ',', QUOTECHAR '\"')")
+    sql("LOAD DATA fact from'"+currentDirectory+"/src/test/resources/data.csv' INTO CUBE doubletype PARTITIONDATA(DELIMITER ',', QUOTECHAR '\"')")
   }
 
   test("select utilization from doubletype") {

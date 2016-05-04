@@ -19,9 +19,12 @@
 
 package org.carbondata.integration.spark.testsuite.detailquery
 
+import java.io.File
+
 import org.apache.spark.sql.Row
 import org.apache.spark.sql.common.util.CarbonHiveContext._
 import org.apache.spark.sql.common.util.QueryTest
+import org.carbondata.core.util.CarbonProperties
 import org.scalatest.BeforeAndAfterAll
 
 /**
@@ -32,10 +35,14 @@ import org.scalatest.BeforeAndAfterAll
 class IntegerDataTypeTestCase extends QueryTest with BeforeAndAfterAll {
 
   override def beforeAll {
+
+    val currentDirectory = new File(this.getClass.getResource("/").getPath + "/../../")
+      .getCanonicalPath
+    CarbonProperties.getInstance().addProperty("carbon.direct.surrogate","false")
 //    sql("CREATE CUBE integertypecube DIMENSIONS (empno Integer, workgroupcategory Integer, deptno Integer, projectcode Integer) MEASURES (attendance Integer) OPTIONS (PARTITIONER [PARTITION_COUNT=1])")
 //    sql("LOAD DATA fact from './src/test/resources/data.csv' INTO CUBE integertypecube PARTITIONDATA(DELIMITER ',', QUOTECHAR '\"')")
-  sql("CREATE CUBE cube_restructure444 DIMENSIONS (a0 STRING) MEASURES (b0 INTEGER) OPTIONS (AGGREGATION [b0 = count] PARTITIONER [CLASS = 'org.carbondata.integration.spark.partition.api.impl.SampleDataPartitionerImpl', COLUMNS= (a0) ,PARTITION_COUNT=1] )")
-    sql("LOAD DATA FACT FROM './src/test/resources/restructure_cube.csv' INTO CUBE cube_restructure444 PARTITIONDATA(DELIMITER ',', QUOTECHAR  '\"')")
+  sql("CREATE CUBE cube_restructure444 DIMENSIONS (a0 STRING,a STRING) MEASURES (b0 INTEGER) OPTIONS (AGGREGATION [b0 = count] PARTITIONER [CLASS = 'org.carbondata.integration.spark.partition.api.impl.SampleDataPartitionerImpl', COLUMNS= (a0) ,PARTITION_COUNT=1] )")
+    sql("LOAD DATA FACT FROM'"+currentDirectory+"/src/test/resources/restructure_cube.csv' INTO CUBE cube_restructure444 PARTITIONDATA(DELIMITER ',', QUOTECHAR  '\"')")
     sql("create schema myschema")
     sql("create schema myschema1")
     sql("create schema drug")

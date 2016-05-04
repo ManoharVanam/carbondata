@@ -5,6 +5,8 @@ import java.io.File
 import java.util.HashMap
 import java.io.FileReader
 
+import scala.io.Source
+
 /**
  * CSV compare utility
  */
@@ -24,7 +26,11 @@ class CsvCompare {
     val olapfile = new BufferedReader(new FileReader(olap))
     var line: String = null
     
-    while (null != (line = hivefile.readLine())) {
+ 
+      for(line <- Source.fromFile(file1).getLines())
+        {
+      println(line)
+      println(line.equals("null"))
       if (map.containsKey(line)) {
         map.put(line, map.get(line) + 1)
       } else {
@@ -32,7 +38,7 @@ class CsvCompare {
       }
     }
     
-    while (null != (line = olapfile.readLine())) {
+    for (line <- Source.fromFile(file2).getLines()) {
       if (carbon.containsKey(line)) {
         carbon.put(line, carbon.get(line) + 1)
       } else {
