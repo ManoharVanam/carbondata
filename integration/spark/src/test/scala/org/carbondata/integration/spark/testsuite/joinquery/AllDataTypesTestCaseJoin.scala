@@ -53,7 +53,7 @@ class AllDataTypesTestCaseJoin extends QueryTest with BeforeAndAfterAll {
   }
   
     override def afterAll {
-    sql("drop cube alldatatypescube")
+   // sql("drop cube alldatatypescube")
        sql("drop cube Carbon_automation_test1")
    sql("drop cube Carbon_automation_test")
 
