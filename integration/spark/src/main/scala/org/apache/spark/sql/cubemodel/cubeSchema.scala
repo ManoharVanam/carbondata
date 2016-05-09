@@ -1676,7 +1676,7 @@ private[sql] case class CreateCube(cm: tableModel) extends RunnableCommand {
 private[sql] case class DeleteLoadsById(
     loadids: Seq[String],
     schemaNameOp: Option[String],
-    cubeName: String) extends RunnableCommand {
+    tableName: String) extends RunnableCommand {
 
   val LOGGER = LogServiceFactory.getLogService("org.apache.spark.sql.cubemodel.cubeSchema")
 
@@ -1687,22 +1687,23 @@ private[sql] case class DeleteLoadsById(
 
     val relation = CarbonEnv.getInstance(sqlContext).carbonCatalog.lookupRelation1(
       Option(schemaName),
-      cubeName,
+      tableName,
       None)(sqlContext).asInstanceOf[CarbonRelation]
     if (relation == null) {
-      LOGGER.audit(s"The delete load by Id is failed. Cube $schemaName.$cubeName does not exist")
-      sys.error(s"Cube $schemaName.$cubeName does not exist")
+      LOGGER.audit(s"The delete load by Id is failed. Cube $schemaName.$tableName does not exist")
+      sys.error(s"Cube $schemaName.$tableName does not exist")
     }
 
-    var cube = CarbonMetadata.getInstance().getCube(schemaName + '_' + cubeName)
+    var carbonTable = org.carbondata.core.carbon.metadata.CarbonMetadata.getInstance()
+      .getCarbonTable(schemaName + '_' + tableName)
 
-    if (null == cube) {
+    if (null == carbonTable) {
       var relation = CarbonEnv.getInstance(sqlContext).carbonCatalog.lookupRelation1(
         Option(schemaName),
-        cubeName,
+        tableName,
         None)(sqlContext).asInstanceOf[CarbonRelation]
     }
-    var path = cube.getMetaDataFilepath()
+    var path = carbonTable.getMetaDataFilepath()
 
 
     var invalidLoadIds = DeleteLoadFromMetadata.updateDeletionStatus(loadids.asJava, path).asScala
@@ -1725,6 +1726,52 @@ private[sql] case class DeleteLoadsById(
       }
     }
 
+    LOGGER.audit("The delete load by Id is successfull.")
+    Seq.empty
+
+  }
+
+}
+
+private[sql] case class DeleteLoadsByLoadDate(
+  schemaNameOp: Option[String],
+  tableName: String,
+  dateField: String,
+  loadDate: String) extends RunnableCommand {
+
+  val LOGGER = LogServiceFactory.getLogService("org.apache.spark.sql.cubemodel.cubeSchema")
+
+  def run(sqlContext: SQLContext): Seq[Row] = {
+
+    LOGGER.audit("The delete load by load date request has been received.")
+    val schemaName = getDB.getDatabaseName(schemaNameOp, sqlContext)
+
+    val relation = CarbonEnv.getInstance(sqlContext).carbonCatalog.lookupRelation1(
+      Option(schemaName),
+      tableName,
+      None
+    )(sqlContext).asInstanceOf[CarbonRelation]
+    if (relation == null) {
+      LOGGER
+        .audit(s"The delete load by load date is failed. Cube $schemaName.$tableName does not " +
+          s"exist")
+      sys.error(s"Cube $schemaName.$tableName does not exist")
+    }
+
+    var carbonTable = org.carbondata.core.carbon.metadata.CarbonMetadata.getInstance()
+      .getCarbonTable(schemaName + '_' + tableName)
+
+    if (null == carbonTable) {
+      var relation = CarbonEnv.getInstance(sqlContext).carbonCatalog.lookupRelation1(
+        Option(schemaName),
+        tableName,
+        None
+      )(sqlContext).asInstanceOf[CarbonRelation]
+    }
+    var path = carbonTable.getMetaDataFilepath()
+
+
+    var invalidLoadTimestamps = DeleteLoadFromMetadata.updateDeletionStatus(loadDate, path).asScala
     LOGGER.audit("The delete load by Id is successfull.")
     Seq.empty
 
@@ -2280,16 +2327,17 @@ private[sql] case class DropAggregateTableCommand(ifExistsSet: Boolean,
 
 private[sql] case class ShowLoads(
     schemaNameOp: Option[String],
-    cubeName: String,
+    tableName: String,
     limit: Option[String],
     override val output: Seq[Attribute]) extends RunnableCommand {
 
 
   override def run(sqlContext: SQLContext): Seq[Row] = {
     val schemaName = getDB.getDatabaseName(schemaNameOp, sqlContext)
-    var cube = CarbonMetadata.getInstance().getCube(schemaName + '_' + cubeName)
+    var carbonTable = org.carbondata.core.carbon.metadata.CarbonMetadata.getInstance()
+      .getCarbonTable(schemaName + '_' + tableName)
 
-    val path = cube.getMetaDataFilepath()
+    val path = carbonTable.getMetaDataFilepath()
 
     val loadMetadataDetailsArray = CarbonUtil.readLoadMetadata(path)
 
@@ -2411,6 +2459,8 @@ private[sql] case class DeleteLoadByDate(
     val relation = CarbonEnv.getInstance(sqlContext).carbonCatalog
         .lookupRelation1(Some(schemaName), cubeName, None)(sqlContext).asInstanceOf[CarbonRelation]
     var level: String = ""
+    var carbonTable = org.carbondata.core.carbon.metadata.CarbonMetadata
+      .getInstance().getCarbonTable(schemaName + '_' + cubeName)
 
     if (relation == null) {
       LOGGER.audit(s"The delete load by date is failed. Cube $schemaName.$cubeName does not exist")
@@ -2437,7 +2487,7 @@ private[sql] case class DeleteLoadByDate(
     CarbonDataRDDFactory.deleteLoadByDate(
       sqlContext,
       // TODO: Need to use carbonTable
-      null,
+      new CarbonDataLoadSchema(carbonTable),
       schemaName,
       cubeName,
       tableName,
