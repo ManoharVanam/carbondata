@@ -32,7 +32,6 @@ public class AndExpression extends BinaryLogicalExpression {
 
   public AndExpression(Expression left, Expression right) {
     super(left, right);
-    // TODO Auto-generated constructor stub
   }
 
   @Override public ExpressionResult evaluate(RowIntf value) throws FilterUnsupportedException {
@@ -51,12 +50,10 @@ public class AndExpression extends BinaryLogicalExpression {
   }
 
   @Override public ExpressionType getFilterExpressionType() {
-    // TODO Auto-generated method stub
     return ExpressionType.AND;
   }
 
   @Override public String getString() {
-    // TODO Auto-generated method stub
     return "And(" + left.getString() + ',' + right.getString() + ')';
   }
 

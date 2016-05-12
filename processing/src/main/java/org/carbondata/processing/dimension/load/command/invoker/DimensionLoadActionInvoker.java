@@ -28,14 +28,6 @@ public class DimensionLoadActionInvoker {
   private DimensionLoadCommand dimensionLoadCommand;
 
   /**
-   *
-   *
-   */
-  public DimensionLoadActionInvoker(DimensionLoadCommand loadCommand) {
-    this.dimensionLoadCommand = loadCommand;
-  }
-
-  /**
    * Executes the command
    *
    * @throws Exception

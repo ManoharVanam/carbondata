@@ -32,17 +32,12 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.carbondata.common.logging.LogService;
 import org.carbondata.common.logging.LogServiceFactory;
 import org.carbondata.core.constants.CarbonCommonConstants;
-import org.carbondata.core.datastorage.store.filesystem.CarbonFile;
-import org.carbondata.core.datastorage.store.filesystem.CarbonFileFilter;
-import org.carbondata.core.datastorage.store.impl.FileFactory;
-import org.carbondata.core.datastorage.store.impl.FileFactory.FileType;
 import org.carbondata.core.util.CarbonUtil;
 import org.carbondata.core.writer.ByteArrayHolder;
 import org.carbondata.processing.merger.exeception.SliceMergerException;
@@ -56,57 +51,6 @@ public final class CarbonSliceMergerUtil {
 
   private CarbonSliceMergerUtil() {
 
-  }
-
-  /**
-   * Below method will be used to get the file map
-   * Map will contain Key as a type of file(File Name) and its list of files
-   *
-   * @param sliceFiles slice files
-   * @return file map
-   */
-  public static Map<String, List<CarbonFile>> getFileMap(CarbonFile[][] sliceFiles) {
-    Map<String, List<CarbonFile>> filesMap = new LinkedHashMap<String, List<CarbonFile>>();
-    for (int i = 0; i < sliceFiles.length; i++) {
-      for (int j = 0; j < sliceFiles[i].length; j++) {
-        String fileName = sliceFiles[i][j].getName();
-        List<CarbonFile> fileList = filesMap.get(fileName);
-        if (null == fileList) {
-          fileList = new ArrayList<CarbonFile>(CarbonCommonConstants.CONSTANT_SIZE_TEN);
-          fileList.add(sliceFiles[i][j]);
-        } else {
-          fileList.add(sliceFiles[i][j]);
-        }
-        filesMap.put(fileName, fileList);
-      }
-    }
-    return filesMap;
-  }
-
-  /**
-   * This method will be used for copy file from source to destination
-   * location
-   *
-   * @param sourceLocation      source path
-   * @param desTinationLocation destination path
-   * @throws IOException if any problem while  reading or writing the files
-   */
-  public static void copyFile(CarbonFile sourceLocation, String desTinationLocation)
-      throws IOException {
-
-    InputStream inputStream = null;
-    OutputStream outputStream = null;
-    try {
-      inputStream = FileFactory.getDataInputStream(sourceLocation.getAbsolutePath(),
-          FileFactory.getFileType(sourceLocation.getAbsolutePath()));
-      outputStream = FileFactory
-          .getDataOutputStream(desTinationLocation, FileFactory.getFileType(desTinationLocation),
-              10240, true);
-
-      copyFile(inputStream, outputStream);
-    } finally {
-      CarbonUtil.closeStreams(inputStream, outputStream);
-    }
   }
 
   /**
@@ -312,55 +256,4 @@ public final class CarbonSliceMergerUtil {
       CarbonUtil.closeStreams(stream);
     }
   }
-
-  /**
-   * compare
-   *
-   * @param byte1
-   * @param byte2
-   * @return int
-   */
-  public static int compare(byte[] byte1, byte[] byte2) {
-    int cmp = 0;
-    int length = byte1.length;
-    for (int i = 0; i < length; i++) {
-      int a = (byte1[i] & 0xff);
-      int b = (byte2[i] & 0xff);
-      cmp = a - b;
-      if (cmp != 0) {
-        cmp = cmp < 0 ? -1 : 1;
-        break;
-      }
-    }
-    return cmp;
-  }
-
-  public static File decryptEncyptedFile(File memberFile) throws SliceMergerException {
-    String filePath = memberFile.getAbsolutePath() + CarbonCommonConstants.FILE_INPROGRESS_STATUS;
-    return new File(filePath);
-  }
-
-  /**
-   * below method will be used to get the files
-   *
-   * @param sliceLocation slocation locations
-   * @return sorted files
-   */
-  public static CarbonFile[] getSortedPathForFiles(String sliceLocation) {
-    FileType fileType = FileFactory.getFileType(sliceLocation);
-    CarbonFile storeFolder = FileFactory.getCarbonFile(sliceLocation, fileType);
-
-    CarbonFile[] files = storeFolder.listFiles(new CarbonFileFilter() {
-
-      @Override public boolean accept(CarbonFile pathname) {
-        if (!(pathname.isDirectory()) && pathname.getName().endsWith(".hierarchy")) {
-          return true;
-        }
-        return false;
-      }
-    });
-
-    return CarbonUtil.getSortedFileList(files);
-  }
-
 }

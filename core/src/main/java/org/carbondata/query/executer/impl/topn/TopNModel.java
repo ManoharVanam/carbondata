@@ -94,21 +94,6 @@ public class TopNModel {
   private AxisType axisType;
 
   /**
-   * Constructor that takes topn meta information.
-   *
-   * @param count
-   * @param topNType
-   * @param dimension
-   * @param measure
-   */
-  public TopNModel(int count, CarbonTopNType topNType, Dimension dimension, Measure measure) {
-    this.count = count;
-    this.topNType = topNType;
-    this.dimension = dimension;
-    this.measure = measure;
-  }
-
-  /**
    * @return the count
    */
   public int getCount() {

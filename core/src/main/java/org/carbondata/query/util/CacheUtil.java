@@ -20,16 +20,11 @@
 package org.carbondata.query.util;
 
 import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.carbondata.common.logging.LogService;
 import org.carbondata.common.logging.LogServiceFactory;
@@ -38,19 +33,13 @@ import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.core.datastorage.store.filesystem.CarbonFile;
 import org.carbondata.core.datastorage.store.impl.FileFactory;
 import org.carbondata.core.datastorage.store.impl.FileFactory.FileType;
-import org.carbondata.core.keygenerator.KeyGenerator;
-import org.carbondata.core.metadata.CarbonMetadata.Dimension;
 import org.carbondata.core.metadata.CarbonSchemaReader;
 import org.carbondata.core.util.CarbonProperties;
 import org.carbondata.core.util.CarbonUtil;
 import org.carbondata.query.datastorage.Member;
-import org.carbondata.query.queryinterface.filter.CarbonFilterInfo;
-import org.carbondata.query.wrappers.ArrayWrapper;
 
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.apache.commons.codec.binary.Base64;
 
-//import org.pentaho.platform.util.logging.Logger;
 
 /**
  * Class Description : This class will be used for prepare member and
@@ -208,35 +197,6 @@ public final class CacheUtil {
     return globalMapping;
   }
 
-  public static Map<Integer, Integer> getGlobalSurrogateMappingMapBased(String filesLocaton) {
-    if (null == filesLocaton) {
-      return null;
-    }
-    DataInputStream fileChannel = null;
-    Map<Integer, Integer> map =
-        new HashMap<Integer, Integer>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-    try {
-      if (!FileFactory.isFileExist(filesLocaton, FileFactory.getFileType(filesLocaton))) {
-        return null;
-      }
-      fileChannel =
-          FileFactory.getDataInputStream(filesLocaton, FileFactory.getFileType(filesLocaton));
-      fileChannel.readInt();
-      int numberOfEntries = fileChannel.readInt();
-      int counter = 0;
-      while (counter < numberOfEntries) {
-        map.put(fileChannel.readInt(), fileChannel.readInt());
-        counter++;
-      }
-    } catch (IOException e) {
-      //            e.printStackTrace();
-      LOGGER.error(e, e.getMessage());
-    } finally {
-      CarbonUtil.closeStreams(fileChannel);
-    }
-    return map;
-  }
-
   /**
    *
    * @param memberFile
@@ -322,44 +282,6 @@ public final class CacheUtil {
     LOGGER.debug("Time taken to process file " + filename + " is : " + (System.currentTimeMillis()
             - startTime));
     return members;
-  }
-
-  public static void processMemberFileNewImpl(int nameColumnIndex, String filename,
-      Int2ObjectMap<Member> members, String dataType)
-
-  {
-    long startTime = System.currentTimeMillis();
-    // Coverity Fix add null check
-    if (null == filename || null == members) {
-      return;
-    }
-    // create an object of FileOutputStream
-    DataInputStream fileChannel = null;
-    try {
-      //
-      try {
-        if (!FileFactory.isFileExist(filename, FileFactory.getFileType(filename))) {
-          return;
-        }
-      } catch (IOException e) {
-        return;
-      }
-      FileType fileType = FileFactory.getFileType(filename);
-      CarbonFile memberFile = FileFactory.getCarbonFile(filename, fileType);
-
-      fileChannel = FileFactory.getDataInputStream(filename, FileFactory.getFileType(filename));
-      populateMemberCache(fileChannel, memberFile, filename, dataType);
-    } catch (FileNotFoundException f) {
-      LOGGER.error("@@@@@@  Member file is missing @@@@@@ : " + filename);
-    } catch (IOException e) {
-      LOGGER.error("@@@@@@  Error while reading Member the file @@@@@@ : " + filename);
-    } finally {
-      CarbonUtil.closeStreams(fileChannel);
-    }
-
-    LOGGER.debug("Time taken to process file " + filename + " is : " + (System.currentTimeMillis()
-            - startTime));
-
   }
 
   private static Member[][] populateMemberCache(DataInputStream fileChannel, CarbonFile memberFile,
@@ -521,109 +443,6 @@ public final class CacheUtil {
       }
     }
     return sortorderIndexArray;
-  }
-
-  /**
-   * Read hierarchies from file. Hierarchies contain duplicate entries.
-   * Hierarchy: Filename= HierachyName Content = byte content
-   *
-   * @param hName
-   * @param filesLocaton
-   * @param keyLength
-   * @param keyGen
-   * @return
-   */
-  public static List<long[]> getHierarchiesList(String filesLocaton, int keyLength,
-      KeyGenerator keyGen) {
-    LOGGER.debug("Reading hierarchies from location: " + filesLocaton);
-
-    // hierarchies list , this will hold hierarchy surrogate key
-    List<long[]> hierarchies = new ArrayList<long[]>(LIST_INTIAL_CAPECITY);
-
-    // set is used to remove duplicate entries
-    Set<ArrayWrapper> wrapHiers = new HashSet<ArrayWrapper>(SET_INTIAL_CAPECITY);
-
-    FileInputStream reader = null;
-    try {
-      reader = new FileInputStream(filesLocaton);
-      // get key length
-      byte[] line = new byte[keyLength];
-      while (reader.read(line) == keyLength) {
-        // add to set
-        wrapHiers.add(new ArrayWrapper(keyGen.getKeyArray(line)));
-      }
-    } catch (IOException e) {
-      LOGGER.error("Error while reading the file: " + filesLocaton);
-    } finally {
-      try {
-        if (reader != null) {
-          reader.close();
-        }
-      } catch (IOException e) {
-        LOGGER.error("Error while closing the file stream for file " + filesLocaton);
-      }
-    }
-
-    // copy all the hierarchies from set to list
-    for (ArrayWrapper wrapHier : wrapHiers) {
-      hierarchies.add(wrapHier.getData());
-    }
-    return hierarchies;
-  }
-
-  /**
-   * This method is used to check whether any exclude filter is present in
-   * constraints
-   *
-   * @param constraints Dimension and its filter info
-   * @return true if exclude filter is present
-   */
-  public static boolean checkAnyExcludeExists(Map<Dimension, CarbonFilterInfo> constraints) {
-    for (Map.Entry<Dimension, CarbonFilterInfo> entry : constraints.entrySet()) {
-      // check if filter size is greater than zero, if it is more than
-      // zero than include filter is present
-      if (entry.getValue().getExcludedMembers().size() > 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * This method is used to check whether any include filter is present in
-   * constraints
-   *
-   * @param constraints Dimension and its filter info
-   * @return true if include filter is present
-   */
-  public static boolean checkAnyIncludeExists(Map<Dimension, CarbonFilterInfo> constraints) {
-    for (Map.Entry<Dimension, CarbonFilterInfo> entry : constraints.entrySet()) {
-      // check if filter size is greater than zero, if it is more than
-      // zero than include filter is present
-      if (entry.getValue().getIncludedMembers().size() > 0) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * This method is used to check whether any include filter is present in
-   * constraints
-   *
-   * @param constraints Dimension and its filter info
-   * @return true if include filter is present
-   */
-  public static boolean checkAnyIncludeOrExists(Map<Dimension, CarbonFilterInfo> constraints) {
-    for (Map.Entry<Dimension, CarbonFilterInfo> entry : constraints.entrySet()) {
-      // check if filter size is greater than zero, if it is more than
-      // zero than include filter is present
-      if (entry.getValue().getIncludedOrMembers() != null
-          && entry.getValue().getIncludedOrMembers().size() > 0) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**

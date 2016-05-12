@@ -42,16 +42,6 @@ public class CarbonMeasure extends AbstractCarbonLevel {
   }
 
   /**
-   * Constructor
-   *
-   * @param measureName
-   * @param aggregateName
-   */
-  public CarbonMeasure(String measureName, String aggregateName) {
-    this.measureName = measureName;
-  }
-
-  /**
    * @return the measureName
    */
   public String getName() {
@@ -65,17 +55,4 @@ public class CarbonMeasure extends AbstractCarbonLevel {
     return CarbonLevelType.MEASURE;
   }
 
-  /**
-   * @return the dimensionLevel
-   */
-  public CarbonDimensionLevel getDimensionLevel() {
-    return dimensionLevel;
-  }
-
-  /**
-   * @param dimensionLevel the dimensionLevel to set
-   */
-  public void setDimensionLevel(CarbonDimensionLevel dimensionLevel) {
-    this.dimensionLevel = dimensionLevel;
-  }
 }

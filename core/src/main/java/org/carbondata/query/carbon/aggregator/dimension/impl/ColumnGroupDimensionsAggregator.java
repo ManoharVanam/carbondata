@@ -44,14 +44,6 @@ public class ColumnGroupDimensionsAggregator implements DimensionDataAggregator 
   protected List<DimensionAggregatorInfo> dimensionAggeragtorInfo;
 
   /**
-   * this will be used to check whether dimension is present in current block
-   * or not this will be useful in case of restructuring when new dimension
-   * has been added so in older table block it will not present, so default
-   * value will be used to aggregate the data.
-   */
-  protected boolean isDimenionPresentInOldBlock;
-
-  /**
    * row group key generator which will be used to unpack the row group column
    * values
    */

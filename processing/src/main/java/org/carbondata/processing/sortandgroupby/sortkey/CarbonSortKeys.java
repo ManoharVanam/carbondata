@@ -900,18 +900,6 @@ public class CarbonSortKeys {
   }
 
   /**
-   * Below method will be used to delete the
-   * temp files and folder
-   */
-  public void deleteTmpFiles() {
-    try {
-      deleteSortLocationIfExists();
-    } catch (CarbonSortKeyAndGroupByException e) {
-      SORTKEYLOGGER.error("Problem while deleting the temp folder and files");
-    }
-  }
-
-  /**
    * Observer class for thread execution
    * In case of any failure we need stop all the running thread
    */

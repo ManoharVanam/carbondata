@@ -19,7 +19,6 @@
 
 package org.carbondata.processing.store.writer.exception;
 
-import java.util.Locale;
 
 public class CarbonDataWriterException extends Exception {
 
@@ -51,17 +50,6 @@ public class CarbonDataWriterException extends Exception {
   public CarbonDataWriterException(String msg, Throwable t) {
     super(msg, t);
     this.msg = msg;
-  }
-
-  /**
-   * This method is used to get the localized message.
-   *
-   * @param locale - A Locale object represents a specific geographical,
-   *               political, or cultural region.
-   * @return - Localized error message.
-   */
-  public String getLocalizedMessage(Locale locale) {
-    return "";
   }
 
   /**

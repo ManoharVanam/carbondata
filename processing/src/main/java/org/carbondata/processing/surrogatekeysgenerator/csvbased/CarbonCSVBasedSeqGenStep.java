@@ -75,10 +75,6 @@ import org.carbondata.processing.schema.metadata.HierarchiesInfo;
 import org.carbondata.processing.util.RemoveDictionaryUtil;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
-import org.pentaho.di.core.Const;
-import org.pentaho.di.core.database.ConnectionPoolUtil;
-import org.pentaho.di.core.database.Database;
-import org.pentaho.di.core.database.map.DatabaseConnectionMap;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleStepException;
 import org.pentaho.di.core.row.RowMetaInterface;
@@ -845,28 +841,6 @@ public class CarbonCSVBasedSeqGenStep extends BaseStep {
       }
     }
     return integers;
-  }
-
-  private String[] getUpdatedDims(String[] dims, String[] NoDictionaryCols, boolean[] presentDims) {
-    int k = 0;
-    String[] normDims = null;
-    if (null != meta.noDictionaryCols) {
-      normDims = new String[meta.normLength + meta.noDictionaryCols.length];
-    } else {
-      normDims = new String[meta.normLength];
-    }
-    for (int i = 0; i < dims.length; i++) {
-      if (presentDims[i]) {
-        normDims[k] = dims[i];
-        k++;
-      }
-    }
-    if (null != NoDictionaryCols) {
-      for (int j = 0; j < NoDictionaryCols.length; j++) {
-        normDims[k++] = NoDictionaryCols[j];
-      }
-    }
-    return normDims;
   }
 
   /**
@@ -1831,45 +1805,6 @@ public class CarbonCSVBasedSeqGenStep extends BaseStep {
     } catch (Exception ex) {
       throw new KettleException(ex.getMessage(), ex);
     }
-  }
-
-  public synchronized void connect(String group, String partitionId, Database database)
-      throws Exception {
-    // Before anything else, let's see if we already have a connection
-    // defined for this group/partition!
-    // The group is called after the thread-name of the transformation or
-    // job that is running
-    // The name of that threadname is expected to be unique (it is in
-    // Kettle)
-    // So the deal is that if there is another thread using that, we go for
-    // it.
-    //
-    Connection conn = null;
-    if (!Const.isEmpty(group)) {
-
-      DatabaseConnectionMap map = DatabaseConnectionMap.getInstance();
-
-      // Try to find the connection for the group
-      Database lookup = map.getDatabase(group, partitionId, database);
-      if (lookup == null) // We already opened this connection for the
-      // partition & database in this group
-      {
-        // Do a normal connect and then store this database object for
-        // later re-use.
-        conn = ConnectionPoolUtil.getConnection(log, database.getDatabaseMeta(), partitionId);
-
-        map.storeDatabase(group, partitionId, database);
-      } else {
-        conn = lookup.getConnection();
-        lookup.setOpened(lookup.getOpened() + 1); // if this counter
-        // hits 0 again, close
-        // the connection.
-      }
-    } else {
-      // Proceed with a normal connect
-      conn = ConnectionPoolUtil.getConnection(log, database.getDatabaseMeta(), partitionId);
-    }
-    database.setConnection(conn);
   }
 
   /**

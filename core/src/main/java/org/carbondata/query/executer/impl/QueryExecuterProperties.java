@@ -19,38 +19,19 @@
 
 package org.carbondata.query.executer.impl;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.carbondata.core.carbon.SqlStatement;
 import org.carbondata.core.keygenerator.KeyGenerator;
 import org.carbondata.core.metadata.CarbonMetadata.Dimension;
-import org.carbondata.core.metadata.CarbonMetadata.Measure;
-import org.carbondata.core.vo.ColumnGroupModel;
-import org.carbondata.query.complex.querytypes.GenericQueryType;
 import org.carbondata.query.datastorage.InMemoryTable;
 
 public class QueryExecuterProperties {
-  /**
-   * schemaName
-   */
-  protected String schemaName;
-
-  /**
-   * cubeName
-   */
-  protected String cubeName;
 
   /**
    * dimension table array
    */
   protected Dimension[] dimTables;
-
-  /**
-   * dimension table array
-   */
-  protected Map<String, GenericQueryType> complexDimensionsMap;
 
   /**
    * list of active slices present for execution
@@ -68,24 +49,9 @@ public class QueryExecuterProperties {
   protected Object[] uniqueValue;
 
   /**
-   * mask bytes ranges
-   */
-  protected int[] maskByteRanges;
-
-  /**
    * masked bytes
    */
   protected int[] maskedBytes;
-
-  /**
-   * max key for query execution
-   */
-  protected byte[] maxKey;
-
-  /**
-   * byteCount
-   */
-  protected int byteCount;
 
   /**
    * isCountMsrExistInCurrTable
@@ -96,16 +62,6 @@ public class QueryExecuterProperties {
    * count msr index in current table
    */
   protected int countMsrIndex = -1;
-
-  /**
-   * average msr indexes
-   */
-  protected List<Integer> avgIndexes;
-
-  /**
-   * sort order of dimension
-   */
-  protected byte[] dimSortOrder;
 
   /**
    * measureStartIndex
@@ -128,16 +84,6 @@ public class QueryExecuterProperties {
   protected boolean isFunctionQuery;
 
   /**
-   * aggExpDimension
-   */
-  protected List<Dimension> aggExpDimensions;
-
-  /**
-   * aggExpMeasure
-   */
-  protected List<Measure> aggExpMeasures;
-
-  /**
    * aggExpressionStartIndex
    */
   protected int aggExpressionStartIndex;
@@ -147,18 +93,9 @@ public class QueryExecuterProperties {
    */
   protected byte[] sortDimIndexes;
 
-  protected boolean[] isNoDictionary;
-
-  /**
-   * Hybrid store model, it will have detail about columnar and row stores
-   */
-  protected ColumnGroupModel hybridStoreModel;
-
   /**
    * array of sql datatypes of mesaures and dimensions
    */
   protected SqlStatement.Type[] dataTypes;
-
-  protected HashMap<Integer, Integer> measureOrdinalMap = new HashMap<>();
 
 }

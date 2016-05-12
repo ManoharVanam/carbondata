@@ -21,11 +21,9 @@ package org.carbondata.query.util;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -41,14 +39,10 @@ import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.core.keygenerator.KeyGenException;
 import org.carbondata.core.keygenerator.KeyGenerator;
 import org.carbondata.core.keygenerator.columnar.impl.MultiDimKeyVarLengthEquiSplitGenerator;
-import org.carbondata.core.metadata.CarbonMetadata;
 import org.carbondata.core.metadata.CarbonMetadata.Dimension;
-import org.carbondata.core.metadata.CarbonMetadata.Measure;
 import org.carbondata.core.metadata.SliceMetaData;
 import org.carbondata.core.util.CarbonUtil;
-import org.carbondata.core.vo.ColumnGroupModel;
 import org.carbondata.query.aggregator.dimension.DimensionAggregatorInfo;
-import org.carbondata.query.cache.QueryExecutorUtil;
 import org.carbondata.query.complex.querytypes.ArrayQueryType;
 import org.carbondata.query.complex.querytypes.GenericQueryType;
 import org.carbondata.query.complex.querytypes.PrimitiveQueryType;
@@ -64,19 +58,6 @@ public final class QueryExecutorUtility {
 
   private QueryExecutorUtility() {
 
-  }
-
-  public static Object[] updateUniqueForSlices(String factTable, boolean isAgg,
-      List<InMemoryTable> slices, SqlStatement.Type[] dataTypes) {
-    List<SliceUniqueValueInfo> sliceUniqueValueInfos =
-        new ArrayList<SliceUniqueValueInfo>(null != slices ? slices.size() : 0);
-
-    Object[] uniqueValue = null;
-    processUniqueAndMinValueInfo(factTable, sliceUniqueValueInfos, true, isAgg, slices);
-    if (sliceUniqueValueInfos.size() > 0) {
-      uniqueValue = mergerSliceUniqueValueInfo(sliceUniqueValueInfos, dataTypes);
-    }
-    return uniqueValue;
   }
 
   public static Object[] getMinValueOfSlices(String factTable, boolean isAgg,
@@ -167,116 +148,6 @@ public final class QueryExecutorUtility {
     return maxSliceUniqueValue;
   }
 
-  /**
-   * et measure indexes with agg type
-   *
-   * @param msrs
-   * @param aggType
-   * @return List<Integer>
-   */
-  public static List<Integer> getMeasureIndexes(List<Measure> msrs, String aggType,
-      List<Integer> integers) {
-    int i = 0;
-    for (Measure msr : msrs) {
-      if (msr.getAggName().equals(aggType)) {
-        integers.add(i);
-      }
-      i++;
-    }
-    return integers;
-  }
-
-  /**
-   * @param msrs
-   * @param allMsrs
-   * @return
-   */
-  public static List<Measure> getOriginalMeasures(List<Measure> msrs, List<Measure> allMsrs) {
-    List<Measure> updated =
-        new ArrayList<CarbonMetadata.Measure>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-    for (Measure currMsr : msrs) {
-      for (Measure orgMsr : allMsrs) {
-        if (currMsr.getOrdinal() == orgMsr.getOrdinal()) {
-          updated.add(orgMsr);
-          break;
-        }
-      }
-    }
-    return updated;
-  }
-
-  public static boolean updateFilterForOlderSlice(Map<Dimension, List<Integer>> dimensionFilter,
-      Dimension[] currentDimeTables, List<InMemoryTable> slices) {
-    if (dimensionFilter.size() < 1) {
-      return true;
-    }
-    boolean isExecutionRequired = false;
-    List<Entry<Dimension, List<Integer>>> entryList =
-        new ArrayList<Entry<Dimension, List<Integer>>>(
-            CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-    for (Entry<Dimension, List<Integer>> entry : dimensionFilter.entrySet()) {
-      boolean isFound = false;
-      Dimension dim = entry.getKey();
-      for (int i = 0; i < currentDimeTables.length; i++) {
-        if (dim.getColName().equals(currentDimeTables[i].getColName())) {
-          isExecutionRequired = true;
-          isFound = true;
-          break;
-
-        }
-      }
-      if (!isFound) {
-        entryList.add(entry);
-      }
-    }
-    for (Entry<Dimension, List<Integer>> entry : entryList) {
-      List<Integer> values = entry.getValue();
-      for (Integer value : values) {
-        if (value != 1) {
-          isExecutionRequired = false;
-          break;
-        }
-      }
-    }
-    return isExecutionRequired;
-  }
-
-  public static boolean updateMsrFilterForOlderSlice(Map<Measure, double[]> measureFilters,
-      SliceMetaData sliceMetaData) {
-    if (measureFilters.size() < 1) {
-      return true;
-    }
-    String[] newMeasures = sliceMetaData.getNewMeasures();
-    double[] newMsrDfts = sliceMetaData.getNewMsrDfts();
-    boolean isExecutionRequired = true;
-    for (Entry<Measure, double[]> entry : measureFilters.entrySet()) {
-      Measure key = entry.getKey();
-      for (int i = 0; i < newMeasures.length; i++) {
-        if (key.getColName().equals(newMeasures[i])) {
-          double[] filterValue = entry.getValue();
-          if (!checkDefaultValueIsPresent(newMsrDfts, filterValue)) {
-            isExecutionRequired = false;
-            break;
-          }
-        }
-      }
-    }
-    return isExecutionRequired;
-  }
-
-  private static boolean checkDefaultValueIsPresent(double[] newMsrDfts, double[] value) {
-    boolean isExecutionRequired = true;
-    for (int j = 0; j < newMsrDfts.length; j++) {
-      for (int k = 0; k < value.length; k++) {
-        if (Double.compare(value[k], newMsrDfts[j]) != 0) {
-          isExecutionRequired = false;
-          break;
-        }
-      }
-    }
-    return isExecutionRequired;
-  }
-
   public static int[][] getMaskedByteRangeForSorting(Dimension[] queryDimensions,
       KeyGenerator generator, int[] maskedRanges) {
     int[][] dimensionCompareIndex = new int[queryDimensions.length][];
@@ -318,47 +189,6 @@ public final class QueryExecutorUtility {
     }
 
     return dimensionCompareIndex;
-  }
-
-  public static int[][] getMaskedByteRangeForSorting(Dimension[] queryDimensions,
-      KeyGenerator generator, int[] maskedRanges, ColumnGroupModel hybridStoreModel) {
-
-    int[][] dimensionCompareIndex = new int[queryDimensions.length][];
-    int index = 0;
-    for (int i = 0; i < queryDimensions.length; i++) {
-      if (queryDimensions[i].isNoDictionaryDim()) {
-        continue;
-      }
-      Set<Integer> integers = new TreeSet<Integer>();
-
-      int[] range = generator
-          .getKeyByteOffsets(queryDimensions[i].getOrdinal());
-
-      for (int j = range[0]; j <= range[1]; j++) {
-        integers.add(j);
-      }
-      dimensionCompareIndex[index] = new int[integers.size()];
-      int j = 0;
-      for (Iterator<Integer> iterator = integers.iterator(); iterator.hasNext(); ) {
-        Integer integer = (Integer) iterator.next();
-        dimensionCompareIndex[index][j++] = integer.intValue();
-      }
-      index++;
-    }
-
-    for (int i = 0; i < dimensionCompareIndex.length; i++) {
-      int[] range = dimensionCompareIndex[i];
-      for (int j = 0; j < range.length; j++) {
-        for (int k = 0; k < maskedRanges.length; k++) {
-          if (range[j] == maskedRanges[k]) {
-            range[j] = k;
-            break;
-          }
-        }
-      }
-    }
-    return dimensionCompareIndex;
-
   }
 
   public static byte[][] getMaksedKeyForSorting(Dimension[] queryDimensions, KeyGenerator generator,
@@ -450,27 +280,6 @@ public final class QueryExecutorUtility {
     return sortedMap;
   }
 
-  public static Map<Integer, GenericQueryType> getQueryComplexTypes(Dimension[] queryDimensions,
-      Map<String, GenericQueryType> complexDimensionsMap) {
-    Map<Integer, GenericQueryType> queryComplexMap = new HashMap<Integer, GenericQueryType>();
-    for (Dimension d : queryDimensions) {
-      GenericQueryType complexType = complexDimensionsMap.get(d.getHierName());
-      if (complexType != null) {
-        queryComplexMap.put(d.getDataBlockIndex(), complexDimensionsMap.get(d.getHierName()));
-      }
-    }
-    return queryComplexMap;
-  }
-
-  public static Map<Integer, GenericQueryType> getAllComplexTypesBlockStartIndex(
-      Map<String, GenericQueryType> complexDimensionsMap) {
-    Map<Integer, GenericQueryType> queryComplexMap = new HashMap<Integer, GenericQueryType>();
-    for (Entry<String, GenericQueryType> d : complexDimensionsMap.entrySet()) {
-      queryComplexMap.put(d.getValue().getBlockIndex(), d.getValue());
-    }
-    return queryComplexMap;
-  }
-
   /**
    * @param cube
    * @return
@@ -518,35 +327,6 @@ public final class QueryExecutorUtility {
     }
 
     return complexTypeMap;
-  }
-
-  /**
-   * This method will get store index for each ordinal
-   * by default all dimension part of row store, their index will be 0
-   *
-   * @param queryDims
-   * @param hybridStoreModel
-   * @return
-   */
-  public static int[] getSelectedDimensionStoreIndex(Dimension[] queryDims,
-      ColumnGroupModel hybridStoreModel) {
-    // It can be possible that multiple queryDim will be part of row store and hence.
-    // If row store index is already added then its not required to add again.
-    Set<Integer> selectedDimensionList = new HashSet<Integer>(queryDims.length);
-    int NoDictionaryStartIndex = hybridStoreModel.getNoOfColumnStore();
-    for (Dimension dimension : queryDims) {
-      if (dimension.isNoDictionaryDim()) {
-        selectedDimensionList.add(NoDictionaryStartIndex++);
-      } else {
-        selectedDimensionList.add(dimension.getOrdinal());
-      }
-    }
-    for (int i = 0; i < queryDims.length; i++) {
-      selectedDimensionList.add(queryDims[i].getOrdinal());
-    }
-    int[] selectedDimsIndex = QueryExecutorUtil.convertIntegerListToIntArray(selectedDimensionList);
-    Arrays.sort(selectedDimsIndex);
-    return selectedDimsIndex;
   }
 
   public static void getComplexDimensionsKeySize(Map<String, GenericQueryType> complexDimensionsMap,
@@ -613,48 +393,6 @@ public final class QueryExecutorUtility {
     }
     return convertIntegerArrayToInt(
         allQueryDimension.toArray(new Integer[allQueryDimension.size()]));
-  }
-
-  public static int[] getAllSelectedDiemnsionStoreIndex(Dimension[] queryDims,
-      List<DimensionAggregatorInfo> dimAggInfo, List<Dimension> fromCustomExps,
-      ColumnGroupModel hybridStoreModel) {
-    Set<Integer> allQueryDimension =
-        new HashSet<Integer>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-    for (int i = 0; i < queryDims.length; i++) {
-      allQueryDimension.add(queryDims[i].getOrdinal());
-    }
-    for (int i = 0; i < dimAggInfo.size(); i++) {
-      if (dimAggInfo.get(i).isDimensionPresentInCurrentSlice()) {
-        allQueryDimension
-            .add(dimAggInfo.get(i).getDim().getOrdinal());
-      }
-    }
-
-    for (int i = 0; i < fromCustomExps.size(); i++) {
-      allQueryDimension.add(fromCustomExps.get(i).getOrdinal());
-    }
-    return convertIntegerArrayToInt(
-        allQueryDimension.toArray(new Integer[allQueryDimension.size()]));
-  }
-
-  public static int[] getAllSelectedMeasureOrdinals(Measure[] queryMeasure,
-      List<Measure> filterExpMeasures, String[] strings) {
-    Set<Integer> allQueryMeasures =
-        new HashSet<Integer>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-    for (int i = 0; i < queryMeasure.length; i++) {
-      if (isNewMeasure(strings, queryMeasure[i]) > -1) {
-        allQueryMeasures.add(queryMeasure[i].getOrdinal());
-      }
-    }
-    for (int i = 0; i < filterExpMeasures.size(); i++) {
-      if (isNewMeasure(strings, filterExpMeasures.get(i)) > -1) {
-        allQueryMeasures.add(filterExpMeasures.get(i).getOrdinal());
-      }
-    }
-    int[] convertIntegerArrayToInt =
-        convertIntegerArrayToInt(allQueryMeasures.toArray(new Integer[allQueryMeasures.size()]));
-    Arrays.sort(convertIntegerArrayToInt);
-    return convertIntegerArrayToInt;
   }
 
   public static int[] convertIntegerArrayToInt(Integer[] integerArray) {
@@ -730,44 +468,6 @@ public final class QueryExecutorUtility {
       }
     }
     return null;
-  }
-
-  public static int isNewDimension(String[] dimensions, Dimension currDimension) {
-    if (null == dimensions || dimensions.length < 1) {
-      return -1;
-    }
-    for (int i = 0; i < dimensions.length; i++) {
-      if (dimensions[i]
-          .equals(currDimension.getActualTableName() + '_' + currDimension.getColName())) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  public static int isNewMeasure(String[] measures, Measure currMeasure) {
-    if (null == measures || measures.length < 1) {
-      return -1;
-    }
-    for (int i = 0; i < measures.length; i++) {
-      if (measures[i].equals(currMeasure.getColName())) {
-        return i;
-      }
-    }
-    return -1;
-  }
-
-  public static byte[] fillSortedDimensions(Dimension[] sortedDimensions,
-      Dimension[] queryDimensions) {
-    byte[] sortedDims = new byte[queryDimensions.length];
-    for (int j = 0; j < queryDimensions.length; j++) {
-      for (Dimension dimension : sortedDimensions) {
-        if (dimension.equals(queryDimensions[j])) {
-          sortedDims[j] = 1;
-        }
-      }
-    }
-    return sortedDims;
   }
 
 }

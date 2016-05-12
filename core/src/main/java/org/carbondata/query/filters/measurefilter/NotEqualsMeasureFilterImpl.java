@@ -58,7 +58,6 @@ public class NotEqualsMeasureFilterImpl implements MeasureFilter {
     } else {
       return msrValue[index].getDoubleValue() != filterValue;
     }
-    //TODO Jay
   }
 
   /**

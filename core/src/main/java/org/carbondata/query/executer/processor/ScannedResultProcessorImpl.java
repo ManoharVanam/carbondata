@@ -34,7 +34,6 @@ import org.carbondata.common.logging.LogServiceFactory;
 import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.core.datastorage.store.impl.FileFactory;
 import org.carbondata.core.iterator.CarbonIterator;
-import org.carbondata.core.util.CarbonProperties;
 import org.carbondata.query.executer.exception.QueryExecutionException;
 import org.carbondata.query.executer.pagination.impl.DataFileWriter;
 import org.carbondata.query.executer.pagination.impl.QueryResult;
@@ -55,7 +54,6 @@ import org.carbondata.query.util.ScannedResultProcessorUtil;
 import org.carbondata.query.writer.WriterExecutor;
 import org.carbondata.query.writer.exception.ResultWriterException;
 
-//import org.carbondata.core.engine.processor.writer.RowWriterProcessor;
 
 /**
  * Project Name  : Carbon
@@ -72,11 +70,6 @@ public class ScannedResultProcessorImpl implements ScannedResultProcessor {
    */
   private static final LogService LOGGER =
       LogServiceFactory.getLogService(ScannedResultProcessorImpl.class.getName());
-  private static long internalMergeLimit = Long.parseLong(CarbonProperties.getInstance()
-      .getProperty(CarbonCommonConstants.PAGINATED_INTERNAL_MERGE_SIZE_LIMIT,
-          CarbonCommonConstants.PAGINATED_INTERNAL_MERGE_SIZE_LIMIT_DEFAULT))
-      * CarbonCommonConstants.BYTE_TO_KB_CONVERSION_FACTOR
-      * CarbonCommonConstants.BYTE_TO_KB_CONVERSION_FACTOR;
   private final Map<String, String> processedFileMap;
   private Result mergedScannedResult;
   private SliceExecutionInfo info;

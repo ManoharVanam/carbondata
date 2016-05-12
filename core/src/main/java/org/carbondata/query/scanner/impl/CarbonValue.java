@@ -45,32 +45,6 @@ public class CarbonValue implements Serializable, Comparable<CarbonValue> {
     this.values = values;
   }
 
-  /**
-   * @return the values
-   */
-  public MeasureAggregator[] getValues() {
-    return values;
-  }
-
-  public CarbonValue merge(CarbonValue another) {
-    for (int i = 0; i < values.length; i++) {
-      values[i].merge(another.values[i]);
-    }
-    return this;
-  }
-
-  public void setTopNIndex(int index) {
-    this.topNIndex = index;
-  }
-
-  public void addGroup(CarbonKey key, CarbonValue value) {
-
-  }
-
-  public CarbonValue mergeKeyVal(CarbonValue another) {
-    return another;
-  }
-
   @Override public String toString() {
     return Arrays.toString(values);
   }

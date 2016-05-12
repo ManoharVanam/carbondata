@@ -47,14 +47,6 @@ public class HierarchyBTreeStore implements DataStore {
   static final int DEFAULT_PAGESIZE = 128;
 
   /**
-   *
-   */
-  static final int CACHELINESIZE = 128;
-
-  // // Maximum number of keys in a Leaf node
-  // final int maxKeys;
-
-  /**
    * Maximum number of entries in leaf nodes
    */
   private final int leafMaxEntry;
@@ -231,7 +223,6 @@ public class HierarchyBTreeStore implements DataStore {
   }
 
   @Override public long[][] getRanges() {
-    // TODO Auto-generated method stub
     return null;
   }
 

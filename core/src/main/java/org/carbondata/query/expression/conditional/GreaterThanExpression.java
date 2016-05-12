@@ -31,7 +31,6 @@ public class GreaterThanExpression extends BinaryConditionalExpression {
 
   public GreaterThanExpression(Expression left, Expression right) {
     super(left, right);
-    // TODO Auto-generated constructor stub
   }
 
   @Override public ExpressionResult evaluate(RowIntf value) throws FilterUnsupportedException {

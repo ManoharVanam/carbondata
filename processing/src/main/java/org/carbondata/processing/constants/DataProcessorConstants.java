@@ -21,22 +21,6 @@ package org.carbondata.processing.constants;
 
 public final class DataProcessorConstants {
   /**
-   *
-   */
-  public static final String CSV_DATALOADER = "CSV_DATALOADER";
-  /**
-   *
-   */
-  public static final String DATARESTRUCT = "DATARESTRUCT";
-  /**
-   * UPDATEMEMBER
-   */
-  public static final String UPDATEMEMBER = "UPDATEMEMBER";
-  /**
-   * number of days task should be in DB table
-   */
-  public static final String TASK_RETENTION_DAYS = "dataload.taskstatus.retention";
-  /**
    * LOAD_FOLDER
    */
   public static final String LOAD_FOLDER = "Load_";
@@ -48,10 +32,6 @@ public final class DataProcessorConstants {
    * if bad record found
    */
   public static final long CSV_VALIDATION_ERRROR_CODE = 113732678;
-  /**
-   * Year Member val for data retention.
-   */
-  public static final String YEAR = "YEAR";
 
   private DataProcessorConstants() {
 

@@ -77,16 +77,6 @@ public class ByteArrayWrapper implements Comparable<ByteArrayWrapper> {
   }
 
   /**
-   * to get the no dictionary column data
-   *
-   * @param index of the no dictionary key
-   * @return no dictionary key for the index
-   */
-  public byte[] getComplexTypeByIndex(int index) {
-    return this.complexTypesKeys[index];
-  }
-
-  /**
    * to generate the hash code
    */
   @Override public int hashCode() {
@@ -184,13 +174,6 @@ public class ByteArrayWrapper implements Comparable<ByteArrayWrapper> {
       }
     }
     return compareTo;
-  }
-
-  /**
-   * @return the complexTypesKeys
-   */
-  public byte[][] getComplexTypesKeys() {
-    return complexTypesKeys;
   }
 
   /**

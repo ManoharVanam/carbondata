@@ -39,30 +39,9 @@ public class CarbonPaginationException extends Exception {
    * @param errorCode The error code for this exception.
    * @param msg       The error message for this exception.
    */
-  public CarbonPaginationException(String msg) {
-    super(msg);
-    this.msg = msg;
-  }
-
-  /**
-   * Constructor
-   *
-   * @param errorCode The error code for this exception.
-   * @param msg       The error message for this exception.
-   */
   public CarbonPaginationException(String msg, Throwable t) {
     super(msg, t);
     this.msg = msg;
-  }
-
-  /**
-   * Constructor
-   *
-   * @param errorCode The error code for this exception.
-   * @param msg       The error message for this exception.
-   */
-  public CarbonPaginationException(Throwable t) {
-    super(t);
   }
 
   /**

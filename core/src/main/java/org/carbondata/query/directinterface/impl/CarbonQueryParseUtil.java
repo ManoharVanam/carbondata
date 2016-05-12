@@ -19,18 +19,14 @@
 
 package org.carbondata.query.directinterface.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.carbondata.common.logging.LogService;
 import org.carbondata.common.logging.LogServiceFactory;
 import org.carbondata.core.cache.CarbonLRUCache;
-import org.carbondata.core.carbon.CarbonDef.AggMeasure;
 import org.carbondata.core.carbon.metadata.schema.table.CarbonTable;
 import org.carbondata.core.carbon.metadata.schema.table.column.CarbonDimension;
-import org.carbondata.core.carbon.metadata.schema.table.column.CarbonMeasure;
-import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.core.metadata.CarbonMetadata;
 import org.carbondata.core.metadata.CarbonMetadata.Cube;
 import org.carbondata.core.metadata.CarbonMetadata.Dimension;
@@ -46,50 +42,6 @@ public final class CarbonQueryParseUtil {
 
   private CarbonQueryParseUtil() {
 
-  }
-
-  /**
-   * @param carbonTable
-   * @param dims
-   * @param measures
-   */
-  public static String getSuitableTable(CarbonTable carbonTable, List<CarbonDimension> dims,
-      List<CarbonMeasure> measures) throws IOException {
-    List<String> aggtablesMsrs = new ArrayList<String>(CarbonCommonConstants.CONSTANT_SIZE_TEN);
-
-    List<String> aggtables = buildAggTablesList(carbonTable, dims);
-    if (measures.size() == 0 && aggtables.size() > 0) {
-      return aggtables.get(0);
-    }
-
-    //get matching aggregate table matching measure and aggregate function
-    for (String tableName : aggtables) {
-      List<CarbonMeasure> aggMsrs = carbonTable.getMeasureByTableName(tableName);
-      boolean present = false;
-      for (CarbonMeasure msr : measures) {
-        boolean found = false;
-        for (CarbonMeasure aggMsr : aggMsrs) {
-          if (msr.getColName().equals(aggMsr.getColName()) && msr.getAggregateFunction()
-              .equals(aggMsr.getAggregateFunction())) {
-            found = true;
-            break;
-          }
-        }
-        if (found) {
-          present = true;
-        } else {
-          present = false;
-          break;
-        }
-      }
-      if (present) {
-        aggtablesMsrs.add(tableName);
-      }
-    }
-    if (aggtablesMsrs.size() == 0) {
-      return carbonTable.getFactTableName();
-    }
-    return getTabName(carbonTable, aggtablesMsrs);
   }
 
   /**
@@ -110,16 +62,6 @@ public final class CarbonQueryParseUtil {
       }
     }
     return findDim;
-  }
-
-  public static boolean isDimensionMeasureInAggTable(AggMeasure[] aggMeasures, CarbonDimension dim,
-      String agg) {
-    for (AggMeasure aggMsrObj : aggMeasures) {
-      if (dim.getColumnId().equals(aggMsrObj.name) && agg.equals(aggMsrObj.aggregator)) {
-        return true;
-      }
-    }
-    return false;
   }
 
   /**

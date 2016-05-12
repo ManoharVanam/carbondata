@@ -55,7 +55,6 @@ public class DummyBigDecimalAggregator extends AbstractMeasureAggregatorDummy {
   }
 
   @Override public MeasureAggregator getNew() {
-    // TODO Auto-generated method stub
     return new DummyBigDecimalAggregator();
   }
 }

@@ -300,7 +300,6 @@ public class DistinctCountAggregator implements MeasureAggregator {
   }
 
   @Override public MeasureAggregator getNew() {
-    // TODO Auto-generated method stub
     return new DistinctCountAggregator();
   }
 

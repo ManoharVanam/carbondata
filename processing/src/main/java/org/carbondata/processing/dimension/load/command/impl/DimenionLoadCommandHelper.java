@@ -47,7 +47,6 @@ import org.carbondata.core.util.CarbonUtilException;
 import org.carbondata.processing.dimension.load.info.DimensionLoadInfo;
 import org.carbondata.processing.merger.util.CarbonSliceMergerUtil;
 import org.carbondata.processing.surrogatekeysgenerator.csvbased.CarbonCSVBasedDimSurrogateKeyGen;
-import org.carbondata.processing.surrogatekeysgenerator.csvbased.RealTimeDataPropertyReader;
 
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 
@@ -61,10 +60,6 @@ public final class DimenionLoadCommandHelper {
       LogServiceFactory.getLogService(DimenionLoadCommandHelper.class.getName());
 
   private static DimenionLoadCommandHelper instanse;
-  /**
-   * dataPropertyReader
-   */
-  protected RealTimeDataPropertyReader dataPropertyReader;
 
   private DimenionLoadCommandHelper() {
     //Do Nothing
@@ -511,26 +506,6 @@ public final class DimenionLoadCommandHelper {
     }
 
     return dimTableNames;
-  }
-
-  /**
-   * @param originalColumnNames
-   */
-  public String[] checkQuotesAndAddTableName(String[] originalColumnNames, String tableName,
-      String[] trimmedoriginalColName) {
-    //
-    String[] result = new String[originalColumnNames.length];
-    int i = 0;
-    //
-    for (int j = 0; j < originalColumnNames.length; j++) {
-      String str = originalColumnNames[j];
-      result[i] = tableName + '_' + str.trim();
-      trimmedoriginalColName[i] = str.trim();
-      i++;
-    }
-    //
-    return result;
-
   }
 
   /**

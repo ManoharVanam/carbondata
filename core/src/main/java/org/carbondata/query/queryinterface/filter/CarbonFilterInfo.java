@@ -46,19 +46,6 @@ public class CarbonFilterInfo implements Serializable {
   }
 
   /**
-   * CarbonFilterInfo.
-   *
-   * @param exludedMembers
-   * @param includedMembers
-   */
-  public CarbonFilterInfo(List<String> exludedMembers, List<String> includedMembers) {
-    super();
-    this.excludedMembers = (null == exludedMembers ? new ArrayList<String>(10) : exludedMembers);
-    this.includedMembers = (null == includedMembers ? new ArrayList<String>(10) : includedMembers);
-    this.includedOrMembers = new ArrayList<String>(10);
-  }
-
-  /**
    * getExcludedMembers.
    *
    * @return List<String>.

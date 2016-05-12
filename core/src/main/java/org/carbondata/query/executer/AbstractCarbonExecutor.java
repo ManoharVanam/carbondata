@@ -225,34 +225,5 @@ public abstract class AbstractCarbonExecutor implements CarbonExecutor {
     return true;
   }
 
-  /**
-   * Recursively adding the surrogate key for all dimension coming for point queries in the
-   * keyList based on filters selected on all dimensions.
-   *
-   * @param predKeys
-   * @param count
-   * @param builder
-   * @param result
-   */
-  protected void addPointKeyInList(long[][] predKeys, int count, long[] builder,
-      List<long[]> result) {
-    //
-    count++;
-    if (count == predKeys.length - 1) {
-      //
-      long[] list = predKeys[count];
-      for (int i = 0; i < list.length; i++) {
-        builder[count] = predKeys[count][i];
-        result.add(builder.clone());
-      }
-      return;
-    }
-    long[] list = predKeys[count];
-    for (int i = 0; i < list.length; i++) {
-      //
-      builder[count] = list[i];
-      addPointKeyInList(predKeys, count, builder, result);
-    }
-  }
 
 }

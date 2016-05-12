@@ -44,10 +44,6 @@ public class DistinctStringCountAggregator implements MeasureAggregator {
   public void agg(double newVal) {
   }
 
-  public void agg(String newVal) {
-    this.valueSetForStr.add(newVal);
-  }
-
   private void agg(Set<String> set2) {
     this.valueSetForStr.addAll(set2);
   }
@@ -146,7 +142,6 @@ public class DistinctStringCountAggregator implements MeasureAggregator {
   }
 
   @Override public MeasureAggregator getNew() {
-    // TODO Auto-generated method stub
     return new DistinctStringCountAggregator();
   }
 

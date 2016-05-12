@@ -129,7 +129,6 @@ public class ConditionalFilterResolverImpl implements FilterResolverIntf {
           dimColResolvedFilterInfo.setFilterValues(FilterUtil
               .getFilterList(absoluteTableIdentifier, exp, columnList.get(0), isIncludeFilter));
         } catch (QueryExecutionException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       } else if (!(columnList.get(0).getDimension().getDataType()
@@ -141,7 +140,6 @@ public class ConditionalFilterResolverImpl implements FilterResolverIntf {
               .getFilterListForAllValues(absoluteTableIdentifier, exp, columnList.get(0),
                   isIncludeFilter));
         } catch (QueryExecutionException e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         }
       }
@@ -155,7 +153,6 @@ public class ConditionalFilterResolverImpl implements FilterResolverIntf {
    * @return left node of type FilterResolverIntf instance
    */
   public FilterResolverIntf getLeft() {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -165,7 +162,6 @@ public class ConditionalFilterResolverImpl implements FilterResolverIntf {
    * @return left node of type FilterResolverIntf instance
    */
   @Override public FilterResolverIntf getRight() {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -217,7 +213,6 @@ public class ConditionalFilterResolverImpl implements FilterResolverIntf {
         endKeyForNoDictDimension = FilterUtil
             .getEndKeyForNoDictionaryDimension(dimColResolvedFilterInfo, segmentProperties);
       } catch (QueryExecutionException e) {
-        // TODO Auto-generated catch block
         e.printStackTrace();
       }
       endIndexKey = FilterUtil

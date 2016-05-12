@@ -553,13 +553,6 @@ public class DataFileWriter implements Callable<Void> {
       return key.equals(((KeyValueHolder) obj).key);
     }
 
-    //        @Override
-    //        public String toString()
-    //        {
-    //            // TODO Auto-generated method stub
-    //            return integer.toString();
-    //        }
-
   }
 
 }

@@ -19,7 +19,6 @@
 
 package org.carbondata.query.merger.exception;
 
-import java.util.Locale;
 
 public class ResultMergerException extends Exception {
   /**
@@ -32,27 +31,6 @@ public class ResultMergerException extends Exception {
    */
   private String msg = "";
 
-  /**
-   * Constructor
-   *
-   * @param errorCode The error code for this exception.
-   * @param msg       The error message for this exception.
-   */
-  public ResultMergerException(String msg) {
-    super(msg);
-    this.msg = msg;
-  }
-
-  /**
-   * Constructor
-   *
-   * @param errorCode The error code for this exception.
-   * @param msg       The error message for this exception.
-   */
-  public ResultMergerException(String msg, Throwable t) {
-    super(msg, t);
-    this.msg = msg;
-  }
 
   /**
    * Constructor
@@ -61,17 +39,6 @@ public class ResultMergerException extends Exception {
    */
   public ResultMergerException(Throwable t) {
     super(t);
-  }
-
-  /**
-   * This method is used to get the localized message.
-   *
-   * @param locale - A Locale object represents a specific geographical,
-   *               political, or cultural region.
-   * @return - Localized error message.
-   */
-  public String getLocalizedMessage(Locale locale) {
-    return "";
   }
 
   /**

@@ -92,13 +92,6 @@ public class ColumnarStorageScannerInfo {
   }
 
   /**
-   * @param blockProcessor the blockProcessor to set
-   */
-  public void setBlockProcessor(DataStoreBlockProcessor blockProcessor) {
-    this.blockProcessor = blockProcessor;
-  }
-
-  /**
    * @return the restructurHolder
    */
   public RestructureHolder getRestructurHolder() {
@@ -132,10 +125,6 @@ public class ColumnarStorageScannerInfo {
 
   public void setAutoAggregateTableRequest(boolean isAutoAggregateTableRequest) {
     this.isAutoAggregateTableRequest = isAutoAggregateTableRequest;
-  }
-
-  public int getKeySize() {
-    return keySize;
   }
 
   public void setKeySize(int keySize) {
@@ -181,10 +170,6 @@ public class ColumnarStorageScannerInfo {
   public void setQueryId(String queryId) {
     this.queryId = queryId;
 
-  }
-
-  public String getPartitionId() {
-    return partitionId;
   }
 
   public void setPartitionId(String partitionId) {

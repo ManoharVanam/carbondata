@@ -19,7 +19,6 @@
 
 package org.carbondata.query.reader.exception;
 
-import java.util.Locale;
 
 public class ResultReaderException extends Exception {
 
@@ -39,17 +38,6 @@ public class ResultReaderException extends Exception {
    * @param errorCode The error code for this exception.
    * @param msg       The error message for this exception.
    */
-  public ResultReaderException(String msg) {
-    super(msg);
-    this.msg = msg;
-  }
-
-  /**
-   * Constructor
-   *
-   * @param errorCode The error code for this exception.
-   * @param msg       The error message for this exception.
-   */
   public ResultReaderException(String msg, Throwable t) {
     super(msg, t);
     this.msg = msg;
@@ -62,17 +50,6 @@ public class ResultReaderException extends Exception {
    */
   public ResultReaderException(Throwable t) {
     super(t);
-  }
-
-  /**
-   * This method is used to get the localized message.
-   *
-   * @param locale - A Locale object represents a specific geographical,
-   *               political, or cultural region.
-   * @return - Localized error message.
-   */
-  public String getLocalizedMessage(Locale locale) {
-    return "";
   }
 
   /**

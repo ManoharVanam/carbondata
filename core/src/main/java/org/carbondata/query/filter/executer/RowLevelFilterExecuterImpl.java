@@ -101,7 +101,6 @@ public class RowLevelFilterExecuterImpl implements FilterExecuter {
       try {
         createRow(blockChunkHolder, row, index);
       } catch (QueryExecutionException e1) {
-        // TODO Auto-generated catch block
         e1.printStackTrace();
       }
       try {

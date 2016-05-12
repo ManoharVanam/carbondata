@@ -89,8 +89,4 @@ public class NonFilterScanResult extends AbstractColumnarScanResult {
       DataOutputStream dataOutputStream) throws IOException {
     getComplexSurrogateKey(currentRow, complexType, dataOutputStream);
   }
-
-  public int getRowIndex() {
-    return currentRow;
-  }
 }

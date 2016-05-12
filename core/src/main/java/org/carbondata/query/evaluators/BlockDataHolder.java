@@ -38,32 +38,12 @@ public class BlockDataHolder {
     this.columnarKeyStore = new ColumnarKeyStoreDataHolder[dimColumnCount];
   }
 
-  public CarbonReadDataHolder[] getMeasureBlocks() {
-    return measureBlocks;
-  }
-
-  public void setMeasureBlocks(final CarbonReadDataHolder[] measureBlocks) {
-    this.measureBlocks = measureBlocks;
-  }
-
-  public ColumnarKeyStoreDataHolder[] getColumnarKeyStore() {
-    return columnarKeyStore;
-  }
-
-  public void setColumnarKeyStore(final ColumnarKeyStoreDataHolder[] columnarKeyStore) {
-    this.columnarKeyStore = columnarKeyStore;
-  }
-
   public DataStoreBlock getLeafDataBlock() {
     return leafDataBlock;
   }
 
   public void setLeafDataBlock(final DataStoreBlock dataBlock) {
     this.leafDataBlock = dataBlock;
-  }
-
-  public FileHolder getFileHolder() {
-    return fileHolder;
   }
 
   public void setFileHolder(final FileHolder fileHolder) {

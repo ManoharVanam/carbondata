@@ -59,7 +59,6 @@ public class LessThanOrEqualToMeasureFilterImpl implements MeasureFilter {
       return msrValue[index].getDoubleValue() <= filterValue;
 
     }
-    //TODO Jay
   }
 
   /**

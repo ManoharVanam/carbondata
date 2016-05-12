@@ -22,13 +22,11 @@
  */
 package org.carbondata.query.writer;
 
-import java.util.AbstractQueue;
 import java.util.Comparator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-import org.carbondata.query.executer.Tuple;
 import org.carbondata.query.result.Result;
 import org.carbondata.query.schema.metadata.DataProcessorInfo;
 import org.carbondata.query.writer.exception.ResultWriterException;
@@ -66,18 +64,6 @@ public class WriterExecutor {
     execService.submit(
         new ScannedResultDataFileWriterThread(scannedResult, dataProcessorInfo, comparator,
             outLocation));
-  }
-
-  /**
-   * This method is used to invoke the writer based on the data heap.
-   *
-   * @param dataHeap
-   * @param writerVo
-   * @param outLocation
-   */
-  public void writeResult(AbstractQueue<Tuple> dataHeap, DataProcessorInfo writerVo,
-      String outLocation) {
-    execService.submit(new HeapBasedDataFileWriterThread(dataHeap, writerVo, outLocation));
   }
 
   /**

@@ -24,7 +24,6 @@ import java.util.List;
 
 import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.query.aggregator.MeasureAggregator;
-import org.carbondata.query.executer.pagination.impl.DataFileWriter.KeyValueHolder;
 import org.carbondata.query.wrappers.ByteArrayWrapper;
 
 public class QueryResult {
@@ -51,14 +50,6 @@ public class QueryResult {
 
   public QueryResultIterator iterator() {
     return new QueryResultIterator();
-  }
-
-  public void prepareResult(KeyValueHolder[] data) {
-    for (int i = 0; i < data.length; i++) {
-      keys.add(data[i].key);
-      values.add(data[i].value);
-    }
-    rsize = keys.size();
   }
 
   public class QueryResultIterator {

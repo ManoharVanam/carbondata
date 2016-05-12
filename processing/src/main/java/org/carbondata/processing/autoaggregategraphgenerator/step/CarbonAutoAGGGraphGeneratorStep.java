@@ -19,34 +19,20 @@
 
 package org.carbondata.processing.autoaggregategraphgenerator.step;
 
-import java.io.ByteArrayInputStream;
-import java.nio.charset.Charset;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
 import org.carbondata.common.logging.LogService;
 import org.carbondata.common.logging.LogServiceFactory;
-import org.carbondata.core.carbon.CarbonDef;
-import org.carbondata.core.carbon.CarbonDef.Cube;
-import org.carbondata.core.carbon.CarbonDef.Schema;
 import org.carbondata.processing.api.dataloader.DataLoadModel;
 import org.carbondata.processing.api.dataloader.SchemaInfo;
-import org.carbondata.processing.graphgenerator.AggregateTableComparator;
 import org.carbondata.processing.graphgenerator.AggregateTableDerivative;
 import org.carbondata.processing.graphgenerator.AggregateTableDerivativeComposite;
-import org.carbondata.processing.graphgenerator.AggregateTableSelecter;
-import org.carbondata.processing.graphgenerator.AutoAggregateTableSelecter;
 import org.carbondata.processing.graphgenerator.GraphGenerator;
 import org.carbondata.processing.schema.metadata.AggregateTable;
-import org.carbondata.processing.util.CarbonSchemaParser;
 
-import org.eigenbase.xom.Parser;
-import org.eigenbase.xom.XOMUtil;
 import org.pentaho.di.core.exception.KettleException;
 import org.pentaho.di.core.exception.KettleXMLException;
 import org.pentaho.di.core.row.RowMetaInterface;
@@ -154,25 +140,6 @@ public class CarbonAutoAGGGraphGeneratorStep extends BaseStep implements StepInt
     return true;
   }
 
-  private void getAllAggregateTableDetails(AggregateTable[] aggTables, Cube cube) {
-    List<AggregateTable> copyOfaggregateTable =
-        new ArrayList<AggregateTable>(Arrays.asList(aggTables));
-    Collections.sort(copyOfaggregateTable, new AggregateTableComparator());
-    AggregateTableSelecter tableSelecter = new AutoAggregateTableSelecter(copyOfaggregateTable);
-    tableSelecter.selectTableForAggTableAggregationProcess(aggTables, cube);
-
-    AggregateTableDerivative aggregateTableDerivativeMetadata =
-        tableSelecter.getAggregateTableDerivativeInstanceForAggEval();
-    List<AggregateTableDerivative> listOfChildAggregateTableDerivativeMetadata =
-        new ArrayList<AggregateTableDerivative>(10);
-    listOfChildAggregateTableDerivativeMetadata.add(aggregateTableDerivativeMetadata);
-    aggTableQueue = new ArrayDeque<AggTableInfo>();
-
-    evaluateAggregateTableDerivativeAndGenerateGraphs(listOfChildAggregateTableDerivativeMetadata,
-        CarbonSchemaParser.getFactTableName(cube), aggTableQueue);
-
-  }
-
   private void evaluateAggregateTableDerivativeAndGenerateGraphs(
       List<AggregateTableDerivative> listOfaggregateTableDerivativeMetadata, String factTableName,
       Deque<AggTableInfo> aggInfoQueue) {
@@ -240,12 +207,6 @@ public class CarbonAutoAGGGraphGeneratorStep extends BaseStep implements StepInt
     model.setTableName(meta.getAggTables());
     model.setLoadNames(meta.getLoadNames());
     model.setModificationOrDeletionTime(meta.getModificationOrDeletionTime());
-  }
-
-  private Schema parseStringToSchema(String schema) throws Exception {
-    Parser xmlParser = XOMUtil.createDefaultParser();
-    ByteArrayInputStream baoi = new ByteArrayInputStream(schema.getBytes(Charset.defaultCharset()));
-    return new CarbonDef.Schema(xmlParser.parse(baoi));
   }
 
   /**

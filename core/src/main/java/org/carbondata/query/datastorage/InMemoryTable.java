@@ -157,20 +157,6 @@ public class InMemoryTable implements Comparable<InMemoryTable> {
   }
 
   /**
-   * CarbonCube
-   */
-  public CarbonDef.Cube getCarbonCube() {
-    return carbonCube;
-  }
-
-  /**
-   * @return
-   */
-  public boolean isSlice() {
-    return isSlice;
-  }
-
-  /**
    * @return
    */
   public TableSlicePathInfo getTableSlicePathInfo() {
@@ -183,31 +169,6 @@ public class InMemoryTable implements Comparable<InMemoryTable> {
    */
   public TableDataStore getDataCache(String tableName) {
     return dataCacheMap.get(tableName);
-  }
-
-  /**
-   * @return the cubeName
-   */
-  public String getCubeName() {
-    return cubeName;
-  }
-
-  /**
-   * @param dimension
-   * @return
-   */
-  public DimensionHierarichyStore getDimensionAndHierarchyCache(String dimension) {
-    return dimesionCache.get(dimension);
-  }
-
-  /**
-   * getStartKey
-   *
-   * @param tableName
-   * @return byte[]
-   */
-  public byte[] getStartKey(String tableName) {
-    return dataCacheMap.get(tableName).getStartKey();
   }
 
   /**
@@ -392,14 +353,6 @@ public class InMemoryTable implements Comparable<InMemoryTable> {
   }
 
   /**
-   * Marks this slice dirty so that it can be cleaned once all the dependent
-   * queries are finished their execution.
-   */
-  public void setCubeMerged() {
-    cubeStatus = READY_TO_CLEAN;
-  }
-
-  /**
    * Try clearing the resources
    */
   public void clean() {
@@ -409,15 +362,6 @@ public class InMemoryTable implements Comparable<InMemoryTable> {
       store.clear();
     }
     dataCacheMap.clear();
-  }
-
-  /**
-   * @return
-   */
-  public long getSize() {
-    // TODO current data size is only fact table size. Need to consider
-    // hierarchies and dimensions also.
-    return dataCacheMap.get(this.factTableName).getSize();
   }
 
   /**
@@ -435,43 +379,12 @@ public class InMemoryTable implements Comparable<InMemoryTable> {
   }
 
   /**
-   * getSchemaName
-   *
-   * @return String
-   */
-  public String getSchemaName() {
-    return schemaName;
-  }
-
-  /**
    * getCubeUniqueName
    *
    * @return String
    */
   public String getCubeUniqueName() {
     return cubeUniqueName;
-  }
-
-  /**
-   * @return Returns the factTableName.
-   */
-  public String getFactTableName() {
-    return factTableName;
-  }
-
-  /**
-   * @param factTableName The factTableName to set.
-   */
-  public void setFactTableName(String factTableName) {
-    this.factTableName = factTableName;
-  }
-
-  public CarbonDef.Schema getSchema() {
-    return schema;
-  }
-
-  public void setSchema(CarbonDef.Schema schema) {
-    this.schema = schema;
   }
 
   public String getLoadName() {
@@ -481,13 +394,6 @@ public class InMemoryTable implements Comparable<InMemoryTable> {
   public void setLoadName(String loadName) {
     this.loadName = loadName;
 
-  }
-
-  /**
-   * @return Returns the tableName.
-   */
-  public String getTableName() {
-    return tableName;
   }
 
   public int getLoadId() {
@@ -572,10 +478,6 @@ public class InMemoryTable implements Comparable<InMemoryTable> {
       return true;
     }
     return false;
-  }
-
-  public ColumnGroupModel getHybridStoreModel() {
-    return this.hybridStoreModel;
   }
 
   /**

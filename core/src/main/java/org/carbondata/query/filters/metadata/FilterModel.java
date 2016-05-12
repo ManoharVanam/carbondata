@@ -49,46 +49,4 @@ public class FilterModel implements Serializable {
     this.maxSize = maxSize;
   }
 
-  /**
-   * @return the filter
-   */
-  public byte[][][] getFilter() {
-    return filter;
-  }
-
-  /**
-   * @param filter the filter to set
-   */
-  public void setFilter(byte[][][] filter) {
-    this.filter = filter;
-  }
-
-  /**
-   * @return the maxKey
-   */
-  public byte[][] getMaxKey() {
-    return maxKey;
-  }
-
-  /**
-   * @param maxKey the maxKey to set
-   */
-  public void setMaxKey(byte[][] maxKey) {
-    this.maxKey = maxKey;
-  }
-
-  /**
-   * @return the maxSize
-   */
-  public int getMaxSize() {
-    return maxSize;
-  }
-
-  /**
-   * @param maxSize the maxSize to set
-   */
-  public void setMaxSize(int maxSize) {
-    this.maxSize = maxSize;
-  }
-
 }

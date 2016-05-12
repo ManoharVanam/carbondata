@@ -239,31 +239,10 @@ public class BlockExecutionInfo {
   }
 
   /**
-   * @return the isFileBasedQuery
-   */
-  public boolean isFileBasedQuery() {
-    return isFileBasedQuery;
-  }
-
-  /**
-   * @param isFileBasedQuery the isFileBasedQuery to set
-   */
-  public void setFileBasedQuery(boolean isFileBasedQuery) {
-    this.isFileBasedQuery = isFileBasedQuery;
-  }
-
-  /**
    * @return the queryId
    */
   public String getQueryId() {
     return queryId;
-  }
-
-  /**
-   * @param queryId the queryId to set
-   */
-  public void setQueryId(String queryId) {
-    this.queryId = queryId;
   }
 
   /**
@@ -566,13 +545,6 @@ public class BlockExecutionInfo {
    */
   public String getPartitionId() {
     return partitionId;
-  }
-
-  /**
-   * @param partitionId the partitionId to set
-   */
-  public void setPartitionId(String partitionId) {
-    this.partitionId = partitionId;
   }
 
   /**

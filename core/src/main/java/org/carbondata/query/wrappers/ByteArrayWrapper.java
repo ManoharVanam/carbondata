@@ -45,7 +45,6 @@ public class ByteArrayWrapper implements Comparable<ByteArrayWrapper>, Serializa
   protected List<byte[]> complexTypesData;
   List<byte[]> listOfNoDictionaryValVal;
   private XXHash32 xxHash32;
-  private byte[] noDictionaryValVal;
 
   public ByteArrayWrapper() {
     this.complexTypesData = new ArrayList<byte[]>();
@@ -66,64 +65,6 @@ public class ByteArrayWrapper implements Comparable<ByteArrayWrapper>, Serializa
 
   public void addComplexTypeData(byte[] data) {
     complexTypesData.add(data);
-  }
-
-  /**
-   * @param data           keys
-   * @param offset         key offset
-   * @param maxKey         max key
-   * @param maskByteRanges mask byte range
-   * @param byteCount      total byte count
-   */
-  public void setData(byte[] data, int offset, byte[] maxKey, int[] maskByteRanges, int byteCount) {
-    // check masked key is null or not
-    if (maskedKey == null) {
-      this.maskedKey = new byte[byteCount];
-    }
-    int counter = 0;
-    int byteRange = 0;
-    for (int i = 0; i < maskByteRanges.length; i++) {
-      byteRange = maskByteRanges[i];
-      maskedKey[counter++] = (byte) (data[byteRange + offset] & maxKey[byteRange]);
-    }
-
-  }
-
-  /**
-   * @param data      byte array
-   * @param offset    key offset
-   * @param length    key length
-   * @param maxKey    max key
-   * @param byteCount total byte count
-   */
-  public void setData(byte[] data, int offset, int length, byte[] maxKey, int byteCount) {
-    if (maskedKey == null) {
-      this.maskedKey = new byte[length];
-    }
-
-    for (int j = 0; j < length; j++) {
-      maskedKey[j] = (byte) (data[offset] & maxKey[j]);
-      offset++;
-    }
-  }
-
-  /**
-   * This method is used to calculate the hash code
-   *
-   * @param maskKey mask key
-   * @return hashcode
-   */
-  protected int getHashCode(byte[] maskKey) {
-    int len = maskKey.length;
-    if (xxHash32 != null) {
-      return xxHash32.hash(maskKey, 0, len, 0);
-    }
-
-    int result = 1;
-    for (int j = 0; j < len; j++) {
-      result = 31 * result + maskKey[j];
-    }
-    return result;
   }
 
   /**

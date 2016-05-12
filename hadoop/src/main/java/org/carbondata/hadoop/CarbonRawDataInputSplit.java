@@ -24,7 +24,6 @@ import java.io.DataOutput;
 import java.io.IOException;
 
 import org.apache.hadoop.io.Writable;
-import org.apache.hadoop.mapred.FileSplit;
 import org.apache.hadoop.mapreduce.InputSplit;
 
 /**
@@ -38,10 +37,6 @@ public class CarbonRawDataInputSplit extends InputSplit implements Writable {
   public CarbonRawDataInputSplit(long length, String[] locations) {
     this.length = length;
     this.locations = locations;
-  }
-
-  public static CarbonRawDataInputSplit from(FileSplit split) throws IOException {
-    return new CarbonRawDataInputSplit(split.getLength(), split.getLocations());
   }
 
   @Override public long getLength() throws IOException, InterruptedException {

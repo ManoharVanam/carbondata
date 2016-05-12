@@ -23,8 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.carbondata.core.constants.CarbonCommonConstants;
-import org.carbondata.core.keygenerator.KeyGenerator;
-import org.carbondata.core.metadata.CarbonMetadata.Measure;
 import org.carbondata.query.aggregator.CalculatedMeasureAggregator;
 import org.carbondata.query.aggregator.MeasureAggregator;
 import org.carbondata.query.aggregator.impl.CalculatedMeasureAggregatorImpl;
@@ -55,25 +53,7 @@ public class GroupByHolder {
    */
   private List<MeasureAggregator[]> msrs =
       new ArrayList<MeasureAggregator[]>(CarbonCommonConstants.CONSTANT_SIZE_TEN);
-
-  //    /**
-  //     * MeasureAggregator
-  //     */
-  //    private MeasureAggregator agg;
-  /**
-   * MeasureAggregator
-   */
   private MeasureAggregator[] aggs;
-
-  /**
-   * countMsrIndex
-   */
-  //    private int countMsrIndex;
-
-  /**
-   * avgMsrIndex
-   */
-  //    private int avgMsrIndex;
 
   /**
    * isCalcMsr
@@ -89,55 +69,6 @@ public class GroupByHolder {
    * maskedBytePos
    */
   private int[] maskedBytePos;
-
-  /**
-   * Constructor that takes dimension index and measure index on which topN
-   * needs to be applied.
-   *
-   * @param dimIndex
-   * @param msrIndex
-   * @param aggName
-   * @param countMsrIndex
-   * @param cubeUniqueName
-   * @param keyGenerator
-   */
-  public GroupByHolder(byte[] maskedBytes, int msrIndex, String aggName, int countMsrIndex,
-      int avgMsrIndex, boolean isCalcMsr, Measure[] queryMsrs, CarbonCalcFunction calcFunction,
-      int[] maskedBytePos, KeyGenerator keyGenerator, String cubeUniqueName) {
-    this.maskedBytes = maskedBytes;
-    //        this.msrIndex = msrIndex;
-    //        this.countMsrIndex = countMsrIndex;
-    //        this.avgMsrIndex = avgMsrIndex;
-    this.isCalcMsr = isCalcMsr;
-    this.calcFunction = calcFunction;
-    this.maskedBytePos = maskedBytePos;
-    //        aggs = AggUtil.getAggregators(queryMsrs, false, keyGenerator, cubeUniqueName);
-
-    //        if(avgMsrIndex >= 0)
-    //        {
-    //            aggs = AggUtil.getAggregators(queryMsrs, true, null, null);
-    //        }
-    // if(isCalcMsr)
-    // {
-    // }
-    // else
-    // {
-    // if(avgMsrIndex >= 0)
-    // {
-    // agg = AggUtil.getAggregator(CarbonCommonConstants.AVERAGE, false,
-    // null, null);
-    // }
-    // else
-    // {
-    // agg = AggUtil.getAggregator(aggName, false, null, null);
-    // }
-    // if(agg == null && aggName == null)
-    // {
-    // agg = AggUtil.getAggregator(CarbonCommonConstants.SUM, false, null,
-    // null);
-    // }
-    // }
-  }
 
   /**
    * Add row to this holder.

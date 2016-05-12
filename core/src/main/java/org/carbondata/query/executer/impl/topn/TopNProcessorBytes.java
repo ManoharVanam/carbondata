@@ -71,11 +71,6 @@ public class TopNProcessorBytes
   private TopNHolderGroup group;
 
   /**
-   *
-   */
-  //    private GroupByHolder holder;
-
-  /**
    * countMsrIndex
    */
   private int countMsrIndex;
@@ -86,54 +81,14 @@ public class TopNProcessorBytes
   private DataProcessor processor;
 
   /**
-   *
-   */
-  //    private boolean isCalculatedMsr;
-
-  /**
-   * Query measures
-   */
-  //    private Measure[] queryMsrs;
-
-  /**
-   * Calc function
-   */
-  //    private CarbonCalcFunction calcFunction;
-
-  /**
-   * maskedBytesPos
-   */
-  //    private int[] maskedBytesPos;
-
-  /**
    * maskedBytesPosForGroup
    */
   private int[] maskedBytesPosForGroup;
-
-  //    private List<byte[]> keys = null;
-
-  //    private List<MeasureAggregator[]> aggregators = null;
 
   /**
    * topnOnColumns
    */
   private boolean topnOnColumns;
-
-  /**
-   * @param dimIndexes
-   * @param topMeasureIndex
-   * @param topNCount
-   * @param topNType
-   */
-  public TopNProcessorBytes(DataProcessor processor) {
-    this.processor = processor;
-
-  }
-
-  public TopNProcessorBytes(List<byte[]> keys, List<MeasureAggregator[]> aggregators) {
-    //        this.keys = keys;
-    //        this.aggregators = aggregators;
-  }
 
   @Override public void initModel(PaginationModel model) throws CarbonPaginationException {
     this.groupMaskedBytes = model.getGroupMaskedBytes();

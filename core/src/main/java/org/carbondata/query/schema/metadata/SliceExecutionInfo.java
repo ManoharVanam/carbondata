@@ -179,10 +179,6 @@ public class SliceExecutionInfo {
    */
   private int[] sortOrderAsPerActualDims;
 
-  /**
-   *
-   */
-  private MeasureFilterProcessorModel msrFilterProcessorModel;
 
   /**
    * avgIndexes
@@ -339,10 +335,6 @@ public class SliceExecutionInfo {
     return complexQueryDimensions;
   }
 
-  public void setComplexQueryDimensions(Map<Integer, GenericQueryType> complexQueryDimensions) {
-    this.complexQueryDimensions = complexQueryDimensions;
-  }
-
   public KeyGenerator getKeyGenerator() {
     return keyGenerator;
   }
@@ -392,16 +384,6 @@ public class SliceExecutionInfo {
    */
   public void setMeasureOrdinal(int[] measureOrdinal) {
     this.measureOrdinal = measureOrdinal;
-  }
-
-  /*  @Override
-    public Object clone() throws CloneNotSupportedException
-    {
-        return super.clone();
-    }*/
-
-  public int getMaskedKeyByteSize() {
-    return maskedKeyByteSize;
   }
 
   public void setMaskedKeyByteSize(final int maskedKeyByteSize) {
@@ -556,26 +538,8 @@ public class SliceExecutionInfo {
     this.restructureHolder = restructureHolder;
   }
 
-  /**
-   * @return the topNModel
-   */
-  public TopNModel getTopNModel() {
-    return topNModel;
-  }
-
-  /**
-   * @param topNModel the topNModel to set
-   */
-  public void setTopNModel(final TopNModel topNModel) {
-    this.topNModel = topNModel;
-  }
-
   public MeasureSortModel getMsrSortModel() {
     return msrSortModel;
-  }
-
-  public void setMsrSortModel(final MeasureSortModel msrSortModel) {
-    this.msrSortModel = msrSortModel;
   }
 
   /**
@@ -642,60 +606,10 @@ public class SliceExecutionInfo {
   }
 
   /**
-   * @param msrConstraints the msrConstraints to set
-   */
-  public void setMsrConstraints(final List<GroupMeasureFilterModel> msrConstraints) {
-    this.msrConstraints = msrConstraints;
-  }
-
-  /**
-   * @return the originalDims
-   */
-  public Dimension[] getOriginalDims() {
-    return originalDims;
-  }
-
-  /**
    * @param originalDims the originalDims to set
    */
   public void setOriginalDims(final Dimension[] originalDims) {
     this.originalDims = originalDims;
-  }
-
-  /**
-   * @return the sortOrderAsPerActualDims
-   */
-  public int[] getSortOrderAsPerActualDims() {
-    return sortOrderAsPerActualDims;
-  }
-
-  /**
-   * @param sortOrderAsPerActualDims the sortOrderAsPerActualDims to set
-   */
-  public void setSortOrderAsPerActualDims(final int[] sortOrderAsPerActualDims) {
-    this.sortOrderAsPerActualDims = sortOrderAsPerActualDims;
-  }
-
-  /**
-   * @return the msrFilterProcessorModel
-   */
-  public MeasureFilterProcessorModel getMsrFilterProcessorModel() {
-    return msrFilterProcessorModel;
-  }
-
-  /**
-   * @param msrFilterProcessorModel the msrFilterProcessorModel to set
-   */
-  public void setMsrFilterProcessorModel(
-      final MeasureFilterProcessorModel msrFilterProcessorModel) {
-    this.msrFilterProcessorModel = msrFilterProcessorModel;
-  }
-
-  /**
-   * @return the avgIndexes
-   */
-  public List<Integer> getAvgIndexes() {
-    return avgIndexes;
   }
 
   /**
@@ -720,35 +634,6 @@ public class SliceExecutionInfo {
   }
 
   /**
-   * @return the replacedDims
-   */
-  public Dimension[] getReplacedDims() {
-    return replacedDims;
-  }
-
-  /**
-   * @param replacedDims the replacedDims to set
-   */
-  public void setReplacedDims(final Dimension[] replacedDims) {
-    this.replacedDims = replacedDims;
-  }
-
-  /**
-   * @return the msrConstraintsAfterTopN
-   */
-  public List<GroupMeasureFilterModel> getMsrConstraintsAfterTopN() {
-    return msrConstraintsAfterTopN;
-  }
-
-  /**
-   * @param msrConstraintsAfterTopN the msrConstraintsAfterTopN to set
-   */
-  public void setMsrConstraintsAfterTopN(
-      final List<GroupMeasureFilterModel> msrConstraintsAfterTopN) {
-    this.msrConstraintsAfterTopN = msrConstraintsAfterTopN;
-  }
-
-  /**
    * @return the isCustomMeasure
    */
   public boolean isCustomMeasure() {
@@ -760,20 +645,6 @@ public class SliceExecutionInfo {
    */
   public void setCustomMeasure(final boolean isCustomMeasure) {
     this.isCustomMeasure = isCustomMeasure;
-  }
-
-  /**
-   * @return the factKeyGenerator
-   */
-  public KeyGenerator getFactKeyGenerator() {
-    return factKeyGenerator;
-  }
-
-  /**
-   * @param factKeyGenerator the factKeyGenerator to set
-   */
-  public void setFactKeyGenerator(final KeyGenerator factKeyGenerator) {
-    this.factKeyGenerator = factKeyGenerator;
   }
 
   /**
@@ -918,25 +789,12 @@ public class SliceExecutionInfo {
     return this.partitionId;
   }
 
-  public void setPartitionId(String partitionId) {
-    this.partitionId = partitionId;
-
-  }
-
   public int[] getAllSelectedMeasures() {
     return allSelectedMeasures;
   }
 
-  public void setAllSelectedMeasures(int[] allSelectedMeasures) {
-    this.allSelectedMeasures = allSelectedMeasures;
-  }
-
   public int getExpressionStartIndex() {
     return expressionStartIndex;
-  }
-
-  public void setExpressionStartIndex(int expressionStartIndex) {
-    this.expressionStartIndex = expressionStartIndex;
   }
 
   public Object[] getMsrDefaultValue() {
@@ -959,22 +817,11 @@ public class SliceExecutionInfo {
     return sortedDimensionsIndex;
   }
 
-  public void setSortedDimensionsIndex(byte[] fillSortedDimensions) {
-    this.sortedDimensionsIndex = fillSortedDimensions;
-  }
-
   /**
    * @return Returns the isExecutionRequired.
    */
   public boolean isExecutionRequired() {
     return isExecutionRequired;
-  }
-
-  /**
-   * @param isExecutionRequired The isExecutionRequired to set.
-   */
-  public void setExecutionRequired(boolean isExecutionRequired) {
-    this.isExecutionRequired = isExecutionRequired;
   }
 
   public DataStoreBlock getStartNode() {
@@ -997,35 +844,12 @@ public class SliceExecutionInfo {
     return isFileBasedQuery;
   }
 
-  public void setFileBasedQuery(boolean isFileBasedQuery) {
-    this.isFileBasedQuery = isFileBasedQuery;
-  }
-
-  public ColumnGroupModel getHybridStoreMeta() {
-    return this.hybridStoreMeta;
-  }
-
-  public void setHybridStoreMeta(ColumnGroupModel hybridStoreMeta) {
-    this.hybridStoreMeta = hybridStoreMeta;
-
-  }
-
   public SqlStatement.Type[] getDataTypes() {
     return dataTypes;
   }
 
   public void setDataTypes(SqlStatement.Type[] dataTypes) {
     this.dataTypes = dataTypes;
-  }
-
-  /**
-   * setNoDictionaryType.
-   *
-   * @param noDictionaryTypes
-   */
-  public void setNoDictionaryType(boolean[] noDictionaryTypes) {
-    this.noDictionaryTypes = noDictionaryTypes;
-
   }
 
   /**
@@ -1054,12 +878,4 @@ public class SliceExecutionInfo {
     return currentDimTables;
   }
 
-  /**
-   * set the dimensions with respect to the current fact table.
-   *
-   * @param currentDimTables
-   */
-  public void setCurrentDimTables(Dimension[] currentDimTables) {
-    this.currentDimTables = currentDimTables;
-  }
 }

@@ -63,18 +63,6 @@ public class MeasureColumnResolvedFilterInfo implements Serializable {
     return isCustomMeasureValue;
   }
 
-  public void setCustomMeasureValue(boolean isCustomMeasureValue) {
-    this.isCustomMeasureValue = isCustomMeasureValue;
-  }
-
-  public Object getUniqueValue() {
-    return uniqueValue;
-  }
-
-  public void setUniqueValue(Object uniqueValue) {
-    this.uniqueValue = uniqueValue;
-  }
-
   public org.carbondata.core.carbon.metadata.datatype.DataType getType() {
     return type;
   }
@@ -101,15 +89,7 @@ public class MeasureColumnResolvedFilterInfo implements Serializable {
     return isMeasureExistsInCurrentSlice;
   }
 
-  public void setMeasureExistsInCurrentSlice(boolean isMeasureExistsInCurrentSlice) {
-    this.isMeasureExistsInCurrentSlice = isMeasureExistsInCurrentSlice;
-  }
-
   public Object getDefaultValue() {
     return defaultValue;
-  }
-
-  public void setDefaultValue(double defaultValue) {
-    this.defaultValue = defaultValue;
   }
 }

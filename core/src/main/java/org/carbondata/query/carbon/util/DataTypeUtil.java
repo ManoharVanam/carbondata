@@ -152,22 +152,4 @@ public class DataTypeUtil {
     }
   }
 
-  /**
-   * below method is to check whether data type is of numeric type or not
-   *
-   * @param dataType data type
-   * @return true if numeric data type
-   */
-  public boolean isNumericDatatype(DataType dataType) {
-    switch (dataType) {
-      case INT:
-      case LONG:
-      case DOUBLE:
-      case DECIMAL:
-        return true;
-      default:
-        return false;
-    }
-  }
-
 }

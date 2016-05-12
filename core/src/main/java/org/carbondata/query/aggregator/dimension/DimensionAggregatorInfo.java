@@ -39,8 +39,6 @@ public class DimensionAggregatorInfo implements Serializable {
 
   private List<Integer> orderList;
 
-  private byte[] nullValueMdkey;
-
   /**
    * isDimensionPresentInCurrentSlice
    */
@@ -73,18 +71,6 @@ public class DimensionAggregatorInfo implements Serializable {
 
   public void setAggList(List<String> aggList) {
     this.aggList = aggList;
-  }
-
-  public void addAgg(String agg) {
-    aggList.add(agg);
-  }
-
-  public void setOrder(int index) {
-    orderList.add(index);
-  }
-
-  public void setNullValueMdkey(byte[] nullValueMdkey) {
-    this.nullValueMdkey = nullValueMdkey;
   }
 
   @Override public int hashCode() {

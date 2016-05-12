@@ -22,7 +22,6 @@ package org.carbondata.processing.factreader.columnar;
 import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.core.datastorage.store.compression.ValueCompressionModel;
 import org.carbondata.core.datastorage.store.filesystem.CarbonFile;
-import org.carbondata.core.metadata.BlockletInfoColumnar;
 import org.carbondata.core.util.ValueCompressionUtil;
 import org.carbondata.processing.factreader.CarbonSurrogateTupleHolder;
 import org.carbondata.processing.factreader.FactReaderInfo;
@@ -84,21 +83,6 @@ public class CarbonColumnarLeafTupleIterator implements CarbonIterator<CarbonSur
     this.aggType = compressionModel.getType();
     initialise();
     this.isMeasureUpdateResuired = factItreatorInfo.isUpdateMeasureRequired();
-  }
-
-  public CarbonColumnarLeafTupleIterator(String loadPath, CarbonFile[] factFiles,
-      FactReaderInfo factReaderInfo, int mdKeySize, BlockletInfoColumnar blockletInfoColumnar) {
-    this.measureCount = factReaderInfo.getMeasureCount();
-    ValueCompressionModel compressionModel =
-        getCompressionModel(loadPath, factReaderInfo.getTableName(), measureCount);
-    this.uniqueValue = compressionModel.getUniqueValue();
-    this.blockletIterator =
-        new CarbonColumnarBlockletIterator(factFiles, mdKeySize, compressionModel, factReaderInfo,
-            blockletInfoColumnar);
-    this.aggType = compressionModel.getType();
-    initialise();
-    this.isMeasureUpdateResuired = factReaderInfo.isUpdateMeasureRequired();
-
   }
 
   /**

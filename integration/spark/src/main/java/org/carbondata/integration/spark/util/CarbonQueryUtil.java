@@ -40,7 +40,6 @@ import org.carbondata.core.datastorage.store.impl.FileFactory;
 import org.carbondata.core.datastorage.store.impl.FileFactory.FileType;
 import org.carbondata.core.load.LoadMetadataDetails;
 import org.carbondata.core.metadata.CarbonMetadata.Cube;
-import org.carbondata.core.util.CarbonProperties;
 import org.carbondata.integration.spark.partition.api.Partition;
 import org.carbondata.integration.spark.partition.api.impl.DefaultLoadBalancer;
 import org.carbondata.integration.spark.partition.api.impl.PartitionMultiFileImpl;
@@ -53,7 +52,6 @@ import org.carbondata.query.carbon.model.QueryDimension;
 import org.carbondata.query.carbon.model.QueryModel;
 import org.carbondata.query.datastorage.InMemoryTableStore;
 import org.carbondata.query.directinterface.impl.CarbonQueryParseUtil;
-import org.carbondata.query.executer.CarbonQueryExecutorModel;
 import org.carbondata.query.expression.ColumnExpression;
 import org.carbondata.query.expression.Expression;
 import org.carbondata.query.expression.conditional.ConditionalExpression;
@@ -67,33 +65,6 @@ import org.apache.spark.sql.cubemodel.Partitioner;
 public final class CarbonQueryUtil {
 
   private CarbonQueryUtil() {
-
-  }
-
-  /**
-   * API will provide the slices
-   *
-   * @param executerModel
-   * @param basePath
-   * @param partitionID
-   * @return
-   */
-  public static List<String> getSliceLoads(CarbonQueryExecutorModel executerModel, String basePath,
-      String partitionID) {
-
-    List<String> listOfLoadPaths = new ArrayList<String>(20);
-    if (null != executerModel) {
-      List<String> listOfLoad = executerModel.getListValidSliceNumbers();
-
-      if (null != listOfLoad) {
-        for (String name : listOfLoad) {
-          String loadPath = CarbonCommonConstants.LOAD_FOLDER + name;
-          listOfLoadPaths.add(loadPath);
-        }
-      }
-    }
-
-    return listOfLoadPaths;
 
   }
 
@@ -404,15 +375,6 @@ public final class CarbonQueryUtil {
         .loadCube(schema, cube, partitionID, sliceLoadPaths, factTableName, basePath,
             currentRestructNumber, cubeCreationTime, loadMetadataDetails);
     return queryScopeObject;
-  }
-
-  public static boolean isQuickFilter(QueryModel queryModel) {
-    return ("true".equals(CarbonProperties.getInstance()
-        .getProperty(CarbonCommonConstants.CARBON_ENABLE_QUICK_FILTER)) && null == queryModel
-        .getFilterExpressionResolverTree() && queryModel.getQueryDimension().size() == 1
-        && queryModel.getQueryMeasures().size() == 0
-        && queryModel.getDimAggregationInfo().size() == 0 && queryModel.getExpressions().size() == 0
-        && !queryModel.isDetailQuery());
   }
 
   public static List<String> getListOfSlices(LoadMetadataDetails[] details) {

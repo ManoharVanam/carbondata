@@ -43,15 +43,6 @@ public class LevelInfo implements Cacheable {
    */
   private long fileTimeStamp;
 
-  /**
-   * offset till where file is read
-   */
-  private long offsetTillFileIsRead;
-
-  public synchronized void setFileTimeStamp(long fileTimeStamp) {
-    this.fileTimeStamp = fileTimeStamp;
-  }
-
   @Override public synchronized long getFileTimeStamp() {
     return fileTimeStamp;
   }
@@ -72,23 +63,11 @@ public class LevelInfo implements Cacheable {
     return fileSize;
   }
 
-  public synchronized void setMemorySize(long size) {
-    this.fileSize = size;
-  }
-
   public synchronized boolean isLoaded() {
     return loaded;
   }
 
   public synchronized void setLoaded(boolean loaded) {
     this.loaded = loaded;
-  }
-
-  public long getOffsetTillFileIsRead() {
-    return offsetTillFileIsRead;
-  }
-
-  public void setOffsetTillFileIsRead(long offsetTillFileIsRead) {
-    this.offsetTillFileIsRead = offsetTillFileIsRead;
   }
 }

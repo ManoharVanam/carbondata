@@ -30,10 +30,6 @@ public class CarbonTuple implements Serializable {
 
   private CarbonMember[] tuple;
 
-  public CarbonTuple(CarbonMember[] tuple) {
-    this.tuple = tuple;
-  }
-
   /**
    * Size of tuple.
    *

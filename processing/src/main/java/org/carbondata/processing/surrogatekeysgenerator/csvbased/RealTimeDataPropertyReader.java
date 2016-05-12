@@ -77,26 +77,6 @@ public class RealTimeDataPropertyReader {
         levelAndCardinalityMap);
   }
 
-  public static String getMappedDayMemberVal(Integer memberVal) {
-    Days[] values = Days.values();
-    for (int i = 0; i < values.length; i++) {
-      if (memberVal == values[i].getValue()) {
-        return values[i].toString();
-      }
-    }
-    return null;
-  }
-
-  public static String getMappedMonthMemberVal(Integer memberVal) {
-    Months[] values = Months.values();
-    for (int i = 0; i < values.length; i++) {
-      if (memberVal == values[i].getValue()) {
-        return values[i].toString();
-      }
-    }
-    return null;
-  }
-
   private void updateMap(String schemandCubeName, Map<String, Set<String>> columnAndMemberListaMap,
       Map<String, String> levelTypeColumnMap, Map<String, Integer> levelAndCardinalityMap) {
     File realTimeDataFile = new File(CarbonCommonConstants.CARBON_REALTIMEDATA_FILE);

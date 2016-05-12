@@ -40,17 +40,6 @@ public class MeasureComparatorTuple implements Comparator<Tuple> {
   private int sortOrder;
 
   /**
-   * MeasureComparator Constructor
-   *
-   * @param msrIndex
-   * @param sortOrder
-   */
-  public MeasureComparatorTuple(int msrIndex, int sortOrder) {
-    this.msrIndex = msrIndex;
-    this.sortOrder = sortOrder;
-  }
-
-  /**
    * This method will be used to compare two byte array
    *
    * @param o1

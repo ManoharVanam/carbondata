@@ -79,13 +79,6 @@ public class Container {
   }
 
   /**
-   * @return the isFilled
-   */
-  public boolean isFilled() {
-    return isFilled;
-  }
-
-  /**
    * @param isFilled the isFilled to set
    */
   public void setFilled(boolean isFilled) {

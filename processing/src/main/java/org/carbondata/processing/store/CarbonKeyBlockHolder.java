@@ -28,11 +28,6 @@ public class CarbonKeyBlockHolder {
     keyBlock = new byte[size][];
   }
 
-  public void addRowToBlock(int index, byte[] keyBlock) {
-    this.keyBlock[index] = keyBlock;
-    counter++;
-  }
-
   public byte[][] getKeyBlock() {
     if (counter < keyBlock.length) {
       byte[][] temp = new byte[counter][];

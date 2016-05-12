@@ -135,13 +135,6 @@ public class CSBTreeColumnarLeafNode extends CSBNode {
     return nKeys;
   }
 
-  /**
-   * @param nKeys the nKeys to set
-   */
-  public void setnKeys(int nKeys) {
-    this.nKeys = nKeys;
-  }
-
   public byte[][] getBlockMinData() {
     return this.columnMinData;
   }
@@ -203,19 +196,6 @@ public class CSBTreeColumnarLeafNode extends CSBNode {
 
   }
 
-  /**
-   * Removes the last entry from the node.
-   */
-  public void removeLastEntry() {
-    nKeys--;
-  }
-
-  /**
-   * Resets the first entry in the node to given value.
-   */
-  public void setFirstEntry(byte[] key, double[] value) {
-  }
-
   @Override public byte[] getBackKeyArray(FileHolder fileHolder) {
     return null;
   }
@@ -252,10 +232,6 @@ public class CSBTreeColumnarLeafNode extends CSBNode {
 
   @Override public MeasureDataWrapper getNodeMsrDataWrapper(int cols, FileHolder fileHolder) {
     return dataStore.getBackData(cols, fileHolder);
-  }
-
-  public String getFactFile() {
-    return factFileName;
   }
 
 }

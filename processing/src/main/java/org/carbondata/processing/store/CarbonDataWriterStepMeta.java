@@ -234,7 +234,6 @@ public class CarbonDataWriterStepMeta extends BaseStepMeta implements StepMetaIn
           Integer.parseInt(XMLHandler.getTagValue(stepnode, "currentRestructNumber"));
       NoDictionaryCount = Integer.parseInt(XMLHandler.getTagValue(stepnode, "NoDictionaryCount"));
     } catch (Exception e) {
-      // TODO Auto-generated catch block
       throw new KettleXMLException("Unable to read step info from XML node", e);
     }
   }

@@ -111,13 +111,6 @@ public class CarbonDimensionFilter implements Serializable {
   }
 
   /**
-   * @param excludeFilter the excludeFilter to set
-   */
-  public void addExcludeFilter(String excludeFilter) {
-    this.excludeFilters.add(excludeFilter);
-  }
-
-  /**
    * @return the includeLikeFilter
    */
   public List<String> getIncludeLikeFilters() {

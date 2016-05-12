@@ -43,26 +43,6 @@ public class CarbonMeasureFilter implements Serializable {
   private boolean afterTopN;
 
   /**
-   * Constructor that takes filter information for measure filter.
-   *
-   * @param filterValue
-   * @param filterType
-   */
-  public CarbonMeasureFilter(double filterValue, FilterType filterType) {
-    this.filterValue = filterValue;
-    this.filterType = filterType;
-  }
-
-  /**
-   * Constructor that takes filter information for measure filter.
-   *
-   * @param filterType
-   */
-  public CarbonMeasureFilter(FilterType filterType) {
-    this.filterType = filterType;
-  }
-
-  /**
    * get FilterValue
    *
    * @return the filterValue

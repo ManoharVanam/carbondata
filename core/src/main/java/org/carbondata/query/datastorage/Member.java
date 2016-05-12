@@ -73,18 +73,4 @@ public class Member {
     return new String(name);
   }
 
-  /**
-   * @return
-   */
-  public Object[] getAttributes() {
-    return attributes;
-  }
-
-  /**
-   * @param properties
-   */
-  public void setAttributes(final Object[] properties) {
-    this.attributes = properties;
-  }
-
 }

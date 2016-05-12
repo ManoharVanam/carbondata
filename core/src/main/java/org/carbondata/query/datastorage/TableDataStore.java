@@ -38,7 +38,6 @@ import org.carbondata.core.datastorage.store.filesystem.CarbonFile;
 import org.carbondata.core.datastorage.store.filesystem.CarbonFileFilter;
 import org.carbondata.core.datastorage.store.impl.FileFactory;
 import org.carbondata.core.keygenerator.KeyGenerator;
-import org.carbondata.core.keygenerator.columnar.impl.MultiDimKeyVarLengthEquiSplitGenerator;
 import org.carbondata.core.metadata.CarbonMetadata.Cube;
 import org.carbondata.core.metadata.CarbonMetadata.Dimension;
 import org.carbondata.core.metadata.CarbonMetadata.Measure;
@@ -157,13 +156,6 @@ public class TableDataStore {
     this.keyGenerator = keyGenerator;
     this.dimCardinality = new int[dimCardinality.length];
     System.arraycopy(dimCardinality, 0, this.dimCardinality, 0, dimCardinality.length);
-  }
-
-  /**
-   * @return
-   */
-  public String getFactTableColumn() {
-    return factTableColumn;
   }
 
   /**
@@ -450,27 +442,9 @@ public class TableDataStore {
     }
     return complexCount;
   }
-  private int[] getKeyBlockSizeWithComplexTypes(int[] dimCardinality) {
-    int[] keyBlockSize = new int[dimCardinality.length];
-    for (int i = 0; i < dimCardinality.length; i++) {
-      if (dimCardinality[i] == 0) keyBlockSize[i] = 8;
-      else keyBlockSize[i] =
-          new MultiDimKeyVarLengthEquiSplitGenerator(new int[] { dimCardinality[i] }, (byte) 1)
-              .getBlockKeySize()[0];
-    }
-    return keyBlockSize;
-  }
 
   public KeyValue getData(byte[] key, Scanner scanner) {
     return data.get(key, scanner);
-  }
-
-  public void initializeScanner(byte[] key, Scanner scanner) {
-    data.getNext(key, scanner);
-  }
-
-  public KeyValue getNextAvailableData(byte[] key, Scanner scanner) {
-    return data.getNext(key, scanner);
   }
 
   public DataStoreBlock getDataStoreBlock(byte[] key, FileHolder fileHolder, boolean isFirst) {
@@ -485,10 +459,6 @@ public class TableDataStore {
     data = null;
   }
 
-  public long[][] getDataStoreRange() {
-    return data.getRanges();
-  }
-
   /**
    * @return the data
    */
@@ -496,28 +466,12 @@ public class TableDataStore {
     return data;
   }
 
-  public int[] getMsrOrdinal() {
-    return msrOrdinal;
-  }
-
   public byte[] getStartKey() {
     return startKey;
   }
 
-  public KeyGenerator getKeyGenerator() {
-    return keyGenerator;
-  }
-
   public Object[] getUniqueValue() {
     return uniqueValue;
-  }
-
-  public SqlStatement.Type[] getDataTypes() {
-    return dataTypes;
-  }
-
-  public void setDataTypes(SqlStatement.Type[] dataTypes) {
-    this.dataTypes = dataTypes;
   }
 
   public Object[] getMinValue() {
@@ -538,25 +492,7 @@ public class TableDataStore {
     return minValueFactForAgg;
   }
 
-  /**
-   * @return the aggKeyBlock
-   */
-  public boolean[] getAggKeyBlock() {
-    return aggKeyBlock;
-  }
-
-  /**
-   * @param aggKeyBlock the aggKeyBlock to set
-   */
-  public void setAggKeyBlock(boolean[] aggKeyBlock) {
-    this.aggKeyBlock = aggKeyBlock;
-  }
-
   public int[] getDimCardinality() {
     return dimCardinality;
-  }
-
-  public void setDimCardinality(int[] dimCardinality) {
-    this.dimCardinality = dimCardinality;
   }
 }

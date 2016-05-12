@@ -81,27 +81,6 @@ public class DimensionHierarichyStore {
     }
   }
 
-  public String getCubeName() {
-    return cubeName;
-  }
-
-  /**
-   * This method will unload the level file from memory
-   */
-  public void unloadLevelFile(String tableName, String dimName, String heirName,
-      String levelActualName) {
-    MemberStore memberStore =
-        membersCache.get(tableName + '_' + levelActualName + '_' + dimName + '_' + heirName);
-    memberStore.clear();
-  }
-
-  /**
-   * Access the dimension members through levelName
-   */
-  public MemberStore getMemberCache(String levelName) {
-    return membersCache.get(levelName);
-  }
-
   /**
    * Process all hierarchies and members of each level to load cache.
    *

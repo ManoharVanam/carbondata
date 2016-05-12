@@ -122,25 +122,6 @@ public class CSVParser {
   }
 
   /**
-   * Constructs CSVParser with supplied separator.
-   *
-   * @param separator the delimiter to use for separating entries.
-   */
-  public CSVParser(char separator) {
-    this(separator, DEFAULT_QUOTE_CHARACTER, DEFAULT_ESCAPE_CHARACTER);
-  }
-
-  /**
-   * Constructs CSVParser with supplied separator and quote char.
-   *
-   * @param separator the delimiter to use for separating entries
-   * @param quotechar the character to use for quoted elements
-   */
-  public CSVParser(char separator, char quotechar) {
-    this(separator, quotechar, DEFAULT_ESCAPE_CHARACTER);
-  }
-
-  /**
    * Constructs CSVReader with supplied separator and quote char.
    *
    * @param separator the delimiter to use for separating entries

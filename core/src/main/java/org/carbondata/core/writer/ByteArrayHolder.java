@@ -49,7 +49,6 @@ public class ByteArrayHolder implements Comparable<ByteArrayHolder> {
   }
 
   @Override public boolean equals(Object obj) {
-    // TODO Auto-generated method stub
     if (obj instanceof ByteArrayHolder) {
       if (0 == ByteUtil.compare(mdKey, ((ByteArrayHolder) obj).mdKey)) {
         return true;

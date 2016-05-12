@@ -75,15 +75,6 @@ public class CarbonResultHolder implements Serializable {
   private int rowLimit = -1;
 
   /**
-   * CarbonResultHolder Constructor
-   *
-   * @param dataTypes SQL data types
-   */
-  public CarbonResultHolder(List<Type> dataTypes) {
-    this.dataTypes = dataTypes;
-  }
-
-  /**
    * @return Returns the rowLimit.
    */
   public int getRowLimit() {

@@ -38,13 +38,11 @@ public abstract class BinaryConditionalExpression extends BinaryLogicalExpressio
 
   public BinaryConditionalExpression(Expression left, Expression right) {
     super(left, right);
-    // TODO Auto-generated constructor stub
   }
 
   // Will get the column informations involved in the expressions by
   // traversing the tree
   public List<ColumnExpression> getColumnList() {
-    // TODO
     List<ColumnExpression> listOfExp =
         new ArrayList<ColumnExpression>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
     getColumnList(this, listOfExp);

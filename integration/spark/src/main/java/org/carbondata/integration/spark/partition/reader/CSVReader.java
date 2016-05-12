@@ -36,13 +36,10 @@ import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 
 import org.carbondata.common.logging.LogService;
 import org.carbondata.common.logging.LogServiceFactory;
-import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.processing.surrogatekeysgenerator.csvbased.BadRecordslogger;
 
 /**
@@ -273,29 +270,6 @@ public class CSVReader implements Closeable, Iterable<String[]> {
    */
   public boolean keepCarriageReturns() {
     return keepCR;
-  }
-
-  /**
-   * Reads the entire file into a List with each element being a String[] of
-   * tokens.
-   *
-   * @return a List of String[], with each String[] representing a line of the
-   * file.
-   * @throws IOException if bad things happen during the read
-   */
-  public List<String[]> readAll() throws IOException {
-
-    //CHECKSTYLE:OFF Approval No:Approval-V1R2C10_005
-    List<String[]> allElements = new ArrayList<>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-
-    while (hasNext) {
-      String[] nextLineAsTokens = readNext();
-      if (nextLineAsTokens != null) {
-        allElements.add(nextLineAsTokens);
-      }
-    }
-    return allElements;
-    //CHECKSTYLE:ON
   }
 
   /**

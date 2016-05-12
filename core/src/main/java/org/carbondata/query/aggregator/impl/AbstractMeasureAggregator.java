@@ -53,11 +53,6 @@ public abstract class AbstractMeasureAggregator implements MeasureAggregator {
 
   }
 
-  public AbstractMeasureAggregator(KeyGenerator generator, String cubeUniqueName) {
-    this.generator = generator;
-    this.cubeUniqueName = cubeUniqueName;
-  }
-
   public String getDimValue(byte[] key, int offset, int length, String tableName, String columnName,
       String dimensionName, String hierarchyName, int keyOrdinal) {
     byte[] val = new byte[length];

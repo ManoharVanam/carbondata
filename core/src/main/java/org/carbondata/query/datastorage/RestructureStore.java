@@ -201,24 +201,6 @@ public class RestructureStore implements Comparable<RestructureStore> {
     this.slices = slices;
   }
 
-  /**
-   * @return Returns the sliceMetaPathMap.
-   */
-  public Map<String, String> getSliceMetaPathMap() {
-    return sliceMetaPathMap;
-  }
-
-  /**
-   * @param sliceMetaPathMap The sliceMetaPathMap to set.
-   */
-  public void setSliceMetaPathMap(Map<String, String> sliceMetaPathMap) {
-    this.sliceMetaPathMap = sliceMetaPathMap;
-  }
-
-  public String getSliceMetadataPath(String tableName) {
-    return this.sliceMetaPathMap.get(tableName);
-  }
-
   public void setSliceMetaPathCache(String sliceMetaDataPath, String tableName) {
     this.sliceMetaPathMap.put(tableName, sliceMetaDataPath);
   }

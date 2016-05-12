@@ -19,7 +19,6 @@
 
 package org.carbondata.processing.surrogatekeysgenerator.csvbased;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -93,10 +92,6 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
    */
   protected int[] msrs;
   /**
-   * timehierName
-   */
-  protected String timehierName;
-  /**
    * hirches
    */
   protected Map<String, int[]> hirches;
@@ -105,17 +100,9 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
    */
   protected Map<String, String[]> hierColumnMap;
   /**
-   * timeFormat
-   */
-  protected SimpleDateFormat timeFormat;
-  /**
    * timeDimeIndex
    */
   protected int timeDimeIndex = -1;
-  /**
-   * timeLevels
-   */
-  protected String[] timeLevels = new String[0];
   /**
    * timeOrdinalCols
    */
@@ -140,10 +127,6 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
    * msrMapping
    */
   protected int[] msrMapping;
-  /**
-   * dimMapping
-   */
-  protected int[] dimMapping;
   /**
    * dims
    */
@@ -1413,10 +1396,6 @@ public class CarbonCSVBasedSeqGenMeta extends BaseStepMeta implements StepMetaIn
 
   public void setCarbonMeasureNames(String carbonMeasureNames) {
     this.carbonMeasureNames = carbonMeasureNames;
-  }
-
-  public String getActualDimNames() {
-    return actualDimNames;
   }
 
   public void setActualDimNames(String actualDimNames) {

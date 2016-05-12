@@ -154,12 +154,10 @@ public class RestructureFilterResolverImpl implements FilterResolverIntf {
   }
 
   @Override public FilterResolverIntf getLeft() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override public FilterResolverIntf getRight() {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -181,7 +179,6 @@ public class RestructureFilterResolverImpl implements FilterResolverIntf {
    * @return IndexKey.
    */
   @Override public IndexKey getstartKey(SegmentProperties segmentProperties) {
-    // TODO Auto-generated method stub
     return null;
   }
 
@@ -193,7 +190,6 @@ public class RestructureFilterResolverImpl implements FilterResolverIntf {
    */
   @Override public IndexKey getEndKey(SegmentProperties segmentProperties,
       AbsoluteTableIdentifier tableIdentifier) {
-    // TODO Auto-generated method stub
     return null;
   }
 

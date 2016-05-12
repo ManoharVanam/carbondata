@@ -79,13 +79,6 @@ public class CSBTreeLeafNode extends CSBNode {
   }
 
   /**
-   * @param nKeys the nKeys to set
-   */
-  public void setnKeys(int nKeys) {
-    this.nKeys = nKeys;
-  }
-
-  /**
    * @return the nextnode
    */
   public CSBNode getNext() {
@@ -137,22 +130,8 @@ public class CSBTreeLeafNode extends CSBNode {
 
   }
 
-  /**
-   * Removes the last entry from the node.
-   */
-  public void removeLastEntry() {
-    nKeys--;
-  }
-
   public void setNextNode(CSBNode nextNode) {
     this.nextNode = nextNode;
-  }
-
-  /**
-   * Resets the first entry in the node to given value.
-   */
-  public void setFirstEntry(byte[] key, double[] value) {
-    keyStore.put(0, key);
   }
 
   @Override public byte[] getBackKeyArray(FileHolder fileHolder) {

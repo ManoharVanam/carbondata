@@ -402,12 +402,6 @@ public class CarbonInputFormat<T> extends FileInputFormat<Void, T> {
     }
   }
 
-  public Path getStorePath(JobContext job) throws IOException {
-
-    String storePathString = getStorePathString(job);
-    return new CarbonStorePath(storePathString);
-  }
-
   public CarbonTablePath getTablePath(JobContext job) throws IOException {
 
     String storePathString = getStorePathString(job);

@@ -28,13 +28,10 @@ import org.carbondata.common.logging.LogServiceFactory;
 import org.carbondata.core.carbon.SqlStatement;
 import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.core.keygenerator.KeyGenerator;
-import org.carbondata.core.metadata.CalculatedMeasure;
-import org.carbondata.core.metadata.CarbonMetadata.Measure;
 import org.carbondata.query.aggregator.CustomCarbonAggregateExpression;
 import org.carbondata.query.aggregator.CustomMeasureAggregator;
 import org.carbondata.query.aggregator.MeasureAggregator;
 import org.carbondata.query.aggregator.impl.*;
-import org.carbondata.query.executer.CarbonQueryExecutorModel;
 
 /**
  * Class Description : AggUtil class for aggregate classes It will return
@@ -61,51 +58,6 @@ public final class AggUtil {
 
   private AggUtil() {
 
-  }
-
-  /**
-   * initialize measureType
-   */
-  public static void initMeasureType(CarbonQueryExecutorModel queryModel) {
-    int ordinal;
-    //This part is used to initialize measure types for normal query
-    measureOrdinal = new int[queryModel.getMsrs().size()];
-    for (int i = 0; i < queryModel.getMsrs().size(); i++) {
-      ordinal = queryModel.getMsrs().get(i).getOrdinal();
-      queryMeasureType.put(ordinal, queryModel.getMsrs().get(i).getDataType());
-      measureOrdinal[i] = ordinal;
-    }
-    //This psrt is used to initialize all mesure types.
-    List<Measure> measures =
-        queryModel.getCube().getMeasures(queryModel.getCube().getFactTableName());
-    allMeasures = new SqlStatement.Type[measures.size()];
-    for (int j = 0; j < measures.size(); j++) {
-      allMeasures[j] = measures.get(j).getDataType();
-    }
-  }
-
-  /**
-   * initialize measureType
-   */
-  public static void initMeasureType(Measure[] measures) {
-    int ordinal;
-    measureOrdinal = new int[measures.length];
-    for (int i = 0; i < measures.length; i++) {
-      ordinal = measures[i].getOrdinal();
-      queryMeasureType.put(ordinal, measures[i].getDataType());
-      measureOrdinal[i] = ordinal;
-    }
-  }
-
-  /**
-   * get selected measureType
-   */
-  public static SqlStatement.Type getMeasureType(int measureOdinal) {
-    if (allMeasures.length != 0) {
-      return allMeasures[measureOdinal];
-    } else {
-      return queryMeasureType.get(measureOdinal);
-    }
   }
 
   /**
@@ -251,74 +203,6 @@ public final class AggUtil {
     // return default sum aggregator in case something wrong happen and log it
     LOGGER.info("Custom aggregator could not be loaded, " + "returning the default Sum Aggregator");
     return null;
-  }
-
-  /**
-   * This method determines what agg needs to be given for each individual
-   * measures and based on hasFactCount, suitable avg ... aggs will be choosen
-   *
-   * @param measures
-   * @param hasFactCount
-   * @return
-   */
-  public static MeasureAggregator[] getAggregators(Measure[] measures,
-      CalculatedMeasure[] calculatedMeasures, boolean hasFactCount, KeyGenerator generator,
-      String slice) {
-    int length = measures.length + calculatedMeasures.length;
-    MeasureAggregator[] aggregators = new MeasureAggregator[length];
-    MeasureAggregator aggregatorInfo = null;
-    int cnt = 0;
-    for (int i = 0; i < measures.length; i++) {
-      if (measures[i].getAggName().equals(CarbonCommonConstants.DISTINCT_COUNT) && measures[i]
-          .isSurrogateGenerated()) {
-        cnt++;
-      }
-    }
-    boolean isSurrogateBasedDistinctCountRequired = true;
-    if (cnt > 1) {
-      isSurrogateBasedDistinctCountRequired = false;
-    }
-    for (int i = 0; i < measures.length; i++) {
-      // based on MeasureAggregator name create the MeasureAggregator
-      // object
-      String aggName = measures[i].getAggName();
-      if (aggName.equals(CarbonCommonConstants.CUSTOM)) {
-        aggregatorInfo =
-            getCustomAggregator(aggName, measures[i].getAggClassName(), generator, slice);
-      } else {
-
-        aggregatorInfo = getAggregator(aggName, hasFactCount, generator,
-            measures[i].isSurrogateGenerated() && isSurrogateBasedDistinctCountRequired,
-            measures[i].getMinValue(), measures[i].getDataType());
-      }
-      aggregators[i] = aggregatorInfo;
-    }
-
-    for (int i = 0; i < calculatedMeasures.length; i++) {
-      CalculatedMeasureAggregatorImpl aggregatorImpl = new CalculatedMeasureAggregatorImpl();
-      aggregators[i + measures.length] = aggregatorImpl;
-    }
-    return aggregators;
-  }
-
-  /**
-   * This method determines what agg needs to be given for each aggregateNames
-   *
-   * @param aggregateNames list of MeasureAggregator name
-   * @param hasFactCount   is fact count present
-   * @param generator      key generator
-   * @return MeasureAggregator array which will hold agrregator for each
-   * aggregateNames
-   */
-  public static MeasureAggregator[] getAggregators(List<String> aggregateNames,
-      boolean hasFactCount, KeyGenerator generator, SqlStatement.Type[] dataTypes) {
-    int valueSize = aggregateNames.size();
-    MeasureAggregator[] aggregators = new MeasureAggregator[valueSize];
-    for (int i = 0; i < valueSize; i++) {
-      aggregators[i] =
-          getAggregator(aggregateNames.get(i), hasFactCount, generator, false, 0, dataTypes[i]);
-    }
-    return aggregators;
   }
 
   /**

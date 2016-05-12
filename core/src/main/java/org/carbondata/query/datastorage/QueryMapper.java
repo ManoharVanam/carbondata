@@ -67,102 +67,6 @@ public final class QueryMapper {
   }
 
   /**
-   * Returns all the queries that are using this given slice.
-   *
-   * @param slice
-   * @return
-   */
-  public static synchronized List<Long> getQueriesPerSlice(InMemoryTable slice) {
-    List<Long> queries = new ArrayList<Long>(CarbonCommonConstants.CONSTANT_SIZE_TEN);
-    Map<Long, Long> threadQueryMap = executionMap.get(slice.getCubeUniqueName());
-    if (threadQueryMap == null) {
-      return queries;
-    }
-
-    for (Map.Entry<Long, Long> threadQuery : threadQueryMap.entrySet()) {
-      // If the thread to slice map contains the the given slice Id, add
-      // to list;
-      List<Long> slices = executionToSlicesMap.get(threadQuery.getKey());
-      if (slices != null && slices.contains(slice.getID())) {
-        queries.add(threadQuery.getValue());
-      }
-    }
-
-    return queries;
-  }
-
-  /**
-   * Register the query on this thread
-   *
-   * @param cubeName
-   * @param queryID
-   * @param threadID
-   */
-  public static void queryStart(String cubeUniqueName, long queryID) {
-
-    Long threadId = Thread.currentThread().getId();
-
-    synchronized (QueryMapper.class) {
-
-      if (executionToSlicesMap.containsKey(threadId)) {
-        // already registered start of query while validating the query.
-        return;
-      }
-
-      Map<Long, Long> cubeMap = executionMap.get(cubeUniqueName);
-      if (cubeMap == null) {
-        cubeMap = new HashMap<Long, Long>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-        executionMap.put(cubeUniqueName, cubeMap);
-      }
-
-      // Register the thread for query
-      cubeMap.put(threadId, queryID);
-
-      LOGGER.info("QueryMapper :: Thread " + threadId + " is executing query "
-          + queryID + " on cube " + cubeUniqueName);
-
-      // Register available cube slices for query (Thread)
-      if (InMemoryTableStore.getInstance().findCache(cubeUniqueName)) {
-        List<Long> slices = InMemoryTableStore.getInstance().getActiveSliceIds(cubeUniqueName);
-        executionToSlicesMap.put(threadId, slices);
-        LOGGER.info("QueryMapper :: Available slices : " + slices);
-        //System.out.println("QueryMapper :: Available slices : " + slices);
-      }
-    }
-  }
-
-  /**
-   * Register the query on this thread, and copy the slices applicable from
-   * the parent thread to the current thread.
-   *
-   * @param queryID
-   */
-  public static void queryStart(String cubeUniqueName, long queryID, long parentThreadId) {
-    Long threadId = Thread.currentThread().getId();
-
-    synchronized (QueryMapper.class) {
-      Map<Long, Long> cubeMap = executionMap.get(cubeUniqueName);
-      // no need to do null check and recreate the map as it would have
-      // been created by the parent thread
-
-      // Register the thread for query
-      cubeMap.put(threadId, queryID);
-
-      // Register available cube slices for query (Thread)
-      executionToSlicesMap.put(threadId, executionToSlicesMap.get(parentThreadId));
-    }
-  }
-
-  /**
-   * Unregister the query on this thread
-   *
-   * @param queryID
-   */
-  public static void queryEnd(String cubeUniqueName, long queryID) {
-    queryEnd(cubeUniqueName, queryID, true);
-  }
-
-  /**
    * Unregister the query on this thread
    *
    * @param queryID
@@ -216,30 +120,6 @@ public final class QueryMapper {
     if (toRemove.size() > 0) {
       listOnQuery.removeAll(toRemove);
     }
-  }
-
-  /**
-   * How many queries working on this cube?
-   *
-   * @return
-   */
-  public static synchronized int getActiveQueriesCount(String cubeUniqueName) {
-    Map<Long, Long> cubeMap = executionMap.get(cubeUniqueName);
-    if (cubeMap != null) {
-      return cubeMap.size();
-    }
-
-    return 0;
-  }
-
-  /**
-   * @param threadId
-   * @return
-   */
-  public static synchronized List<Long> getSlicesForThread(Long threadId) {
-    return (executionToSlicesMap.get(threadId) == null ?
-        null :
-        new ArrayList<Long>(executionToSlicesMap.get(threadId)));
   }
 
 }

@@ -37,8 +37,6 @@ public class RowLevelFilterResolverImpl extends ConditionalFilterResolverImpl {
    *
    */
   private static final long serialVersionUID = 176122729713729929L;
-  protected boolean isExpressionResolve;
-  protected boolean isIncludeFilter;
 
   private List<DimColumnResolvedFilterInfo> dimColEvaluatorInfoList;
   private List<MeasureColumnResolvedFilterInfo> msrColEvalutorInfoList;

@@ -56,7 +56,6 @@ public class FileBasedLimitProcessor implements DataProcessorExt {
   }
 
   @Override public CarbonIterator<QueryResult> getQueryResultIterator() {
-    // TODO Auto-generated method stub
     return processor.getQueryResultIterator();
   }
 

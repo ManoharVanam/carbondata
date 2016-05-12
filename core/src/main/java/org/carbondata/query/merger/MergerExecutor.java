@@ -51,14 +51,6 @@ public class MergerExecutor {
     execService = Executors.newFixedThreadPool(2);
   }
 
-  public void mergeResult(DataProcessor processor, DataProcessorInfo info, CarbonFile[] files) {
-    if (!info.isSortedData()) {
-      execService.submit(new UnSortedResultMerger(processor, info, files));
-    } else {
-      execService.submit(new SortedResultFileMerger(processor, info, files));
-    }
-  }
-
   public void mergeFinalResult(DataProcessor processor, DataProcessorInfo info, CarbonFile[] files)
       throws Exception {
     if (!info.isSortedData()) {

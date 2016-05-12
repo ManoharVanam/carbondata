@@ -38,11 +38,8 @@ public class CsvInputData extends BaseStepData implements StepDataInterface {
   public int preferredBufferSize;
   public String[] filenames;
   public int filenr;
-  public byte[] binaryFilename;
   public boolean isAddingRowNumber;
-  public long rowNumber;
   public int totalNumberOfSteps;
-  public long bytesToSkipInFirstFile;
   public long totalBytesRead;
   public boolean parallel;
   public int filenameFieldIndex;

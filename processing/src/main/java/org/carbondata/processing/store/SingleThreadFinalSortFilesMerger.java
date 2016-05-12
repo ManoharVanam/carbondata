@@ -293,9 +293,4 @@ public class SingleThreadFinalSortFilesMerger {
     return this.fileCounter > 0;
   }
 
-  public void clear() {
-    if (null != recordHolderHeapLocal) {
-      recordHolderHeapLocal = null;
-    }
-  }
 }

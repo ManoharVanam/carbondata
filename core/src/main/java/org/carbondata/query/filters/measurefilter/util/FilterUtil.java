@@ -20,12 +20,10 @@
 package org.carbondata.query.filters.measurefilter.util;
 
 import java.nio.ByteBuffer;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -51,7 +49,6 @@ import org.carbondata.core.constants.CarbonCommonConstants;
 import org.carbondata.core.keygenerator.KeyGenException;
 import org.carbondata.core.keygenerator.KeyGenerator;
 import org.carbondata.core.util.ByteUtil;
-import org.carbondata.core.util.CarbonProperties;
 import org.carbondata.core.util.CarbonUtil;
 import org.carbondata.core.util.CarbonUtilException;
 import org.carbondata.query.carbon.executor.exception.QueryExecutionException;
@@ -211,7 +208,6 @@ public final class FilterUtil {
     Comparator<byte[]> filterNoDictValueComaparator = new Comparator<byte[]>() {
 
       @Override public int compare(byte[] filterMember1, byte[] filterMember2) {
-        // TODO Auto-generated method stub
         return ByteUtil.UnsafeComparer.INSTANCE.compareTo(filterMember1, filterMember2);
       }
 
@@ -919,43 +915,6 @@ public final class FilterUtil {
       noDictionaryStartKeyBuffer.put((byte) 0);
     }
     return noDictionaryStartKeyBuffer.array();
-  }
-
-  public static int compareFilterKeyBasedOnDataType(String dictionaryVal, String memberVal,
-      DataType dataType) {
-    try {
-      switch (dataType) {
-        case INT:
-
-          return Integer.compare((Integer.parseInt(dictionaryVal)), (Integer.parseInt(memberVal)));
-        case DOUBLE:
-          return Double
-              .compare((Double.parseDouble(dictionaryVal)), (Double.parseDouble(memberVal)));
-        case LONG:
-          return Long.compare((Long.parseLong(dictionaryVal)), (Long.parseLong(memberVal)));
-        case BOOLEAN:
-          return Boolean
-              .compare((Boolean.parseBoolean(dictionaryVal)), (Boolean.parseBoolean(memberVal)));
-        case TIMESTAMP:
-          SimpleDateFormat parser = new SimpleDateFormat(CarbonProperties.getInstance()
-              .getProperty(CarbonCommonConstants.CARBON_TIMESTAMP_FORMAT,
-                  CarbonCommonConstants.CARBON_TIMESTAMP_DEFAULT_FORMAT));
-          Date dateToStr;
-          Date dictionaryDate;
-          dateToStr = parser.parse(memberVal);
-          dictionaryDate = parser.parse(dictionaryVal);
-          return dictionaryDate.compareTo(dateToStr);
-
-        case DECIMAL:
-          java.math.BigDecimal javaDecValForDictVal = new java.math.BigDecimal(dictionaryVal);
-          java.math.BigDecimal javaDecValForMemberVal = new java.math.BigDecimal(memberVal);
-          return javaDecValForDictVal.compareTo(javaDecValForMemberVal);
-        default:
-          return -1;
-      }
-    } catch (Exception e) {
-      return -1;
-    }
   }
 
 }

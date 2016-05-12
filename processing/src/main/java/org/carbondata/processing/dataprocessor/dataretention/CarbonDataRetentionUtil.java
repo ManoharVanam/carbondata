@@ -211,31 +211,6 @@ public final class CarbonDataRetentionUtil {
   }
 
   /**
-   * @param loadFiles
-   * @param loadMetadataDetails
-   * @return
-   */
-  public static CarbonFile[] excludeUnwantedLoads(CarbonFile[] loadFiles,
-      List<LoadMetadataDetails> loadMetadataDetails) {
-    List<CarbonFile> validLoads = new ArrayList<CarbonFile>();
-
-    List<String> validLoadsForRetention = getValidLoadsForRetention(loadMetadataDetails);
-
-    for (CarbonFile loadFolder : loadFiles) {
-      String loadName = loadFolder.getName().substring(
-          loadFolder.getName().indexOf(CarbonCommonConstants.LOAD_FOLDER)
-              + CarbonCommonConstants.LOAD_FOLDER.length(), loadFolder.getName().length());
-
-      if (validLoadsForRetention.contains(loadName)) {
-        validLoads.add(loadFolder);
-      }
-
-    }
-
-    return validLoads.toArray(new CarbonFile[validLoads.size()]);
-  }
-
-  /**
    * @param loadMetadataDetails
    * @return
    */

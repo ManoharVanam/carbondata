@@ -44,16 +44,6 @@ public class CarbonSortKeyException extends Exception {
   }
 
   /**
-   * Constructor
-   *
-   * @param msg The error message for this exception.
-   */
-  public CarbonSortKeyException(String msg, Throwable t) {
-    super(msg, t);
-    this.msg = msg;
-  }
-
-  /**
    * This method is used to get the localized message.
    *
    * @param locale - A Locale object represents a specific geographical,

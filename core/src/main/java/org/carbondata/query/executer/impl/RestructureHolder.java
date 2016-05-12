@@ -60,10 +60,6 @@ public class RestructureHolder {
     return queryDimsCount;
   }
 
-  public void setQueryDimsCount(int queryDimsCount) {
-    this.queryDimsCount = queryDimsCount;
-  }
-
   /* (non-Javadoc)
    * @see java.lang.Object#hashCode()
    */

@@ -38,11 +38,6 @@ public class ColumnarCountStartExecuter implements SliceExecuter {
 
   private String tableName;
 
-  public ColumnarCountStartExecuter(List<InMemoryTable> slices, String tableName) {
-    this.slices = slices;
-    this.tableName = tableName;
-  }
-
   @Override
   public CarbonIterator<QueryResult> executeSlices(List<SliceExecutionInfo> infos, int[] sliceIndex)
       throws QueryExecutionException {

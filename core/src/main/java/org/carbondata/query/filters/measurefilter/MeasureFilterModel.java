@@ -22,8 +22,6 @@ package org.carbondata.query.filters.measurefilter;
 import java.io.Serializable;
 
 import org.carbondata.core.carbon.Exp;
-import org.carbondata.core.metadata.CarbonMetadata.Dimension;
-import org.carbondata.query.queryinterface.query.CarbonQuery.AxisType;
 
 public class MeasureFilterModel implements Serializable {
   /**
@@ -42,24 +40,10 @@ public class MeasureFilterModel implements Serializable {
   private MeasureFilterType filterType;
 
   /**
-   * Dimension
-   */
-  private Dimension dimension;
-
-  /**
-   * AxisType
-   */
-  private AxisType axisType;
-
-  /**
    * Calc expression
    */
   private transient Exp exp;
 
-  public MeasureFilterModel(double filterValue, MeasureFilterType filterType) {
-    this.filterValue = filterValue;
-    this.filterType = filterType;
-  }
 
   public MeasureFilterModel() {
 
@@ -73,13 +57,6 @@ public class MeasureFilterModel implements Serializable {
   }
 
   /**
-   * @param filterValue the filterValue to set
-   */
-  public void setFilterValue(double filterValue) {
-    this.filterValue = filterValue;
-  }
-
-  /**
    * @return the filterType
    */
   public MeasureFilterType getFilterType() {
@@ -87,52 +64,10 @@ public class MeasureFilterModel implements Serializable {
   }
 
   /**
-   * @param filterType the filterType to set
-   */
-  public void setFilterType(MeasureFilterType filterType) {
-    this.filterType = filterType;
-  }
-
-  /**
-   * @return the dimension
-   */
-  public Dimension getDimension() {
-    return dimension;
-  }
-
-  /**
-   * @param dimension the dimension to set
-   */
-  public void setDimension(Dimension dimension) {
-    this.dimension = dimension;
-  }
-
-  /**
-   * @return the axisType
-   */
-  public AxisType getAxisType() {
-    return axisType;
-  }
-
-  /**
-   * @param axisType the axisType to set
-   */
-  public void setAxisType(AxisType axisType) {
-    this.axisType = axisType;
-  }
-
-  /**
    * @return the exp
    */
   public Exp getExp() {
     return exp;
-  }
-
-  /**
-   * @param exp the exp to set
-   */
-  public void setExp(Exp exp) {
-    this.exp = exp;
   }
 
   /**

@@ -22,7 +22,6 @@ package org.carbondata.query.cache;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -69,87 +68,6 @@ public final class QueryExecutorUtil {
       max[queryDimensions[i].getOrdinal()] = Long.MAX_VALUE;
     }
     return generator.generateKey(max);
-  }
-
-  /**
-   * getDimension
-   *
-   * @param dimGet
-   * @param dims
-   * @return
-   */
-  public static Dimension getDimension(Dimension dimGet, Dimension[] dims) {
-    for (Dimension dimension : dims) {
-      if (dimGet.getDimName().equals(dimension.getDimName()) && dimGet.getHierName()
-          .equals(dimension.getHierName()) && dimGet.getName().equals(dimension.getName())) {
-        return dimension;
-      }
-    }
-    return dimGet;
-  }
-
-  /**
-   * It checks whether the passed dimension is there in list or not.
-   *
-   * @param dimension
-   * @param dimList
-   * @return
-   */
-  public static boolean contain(Dimension dimension, List<Dimension> dimList) {
-    for (Dimension dim : dimList) {
-      if (dim.getHierName().equals(dimension.getHierName()) && dim.getDimName()
-          .equals(dimension.getDimName()) && dim.getName().equals(dimension.getName())) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * It checks whether the passed dimension is there in list or not.
-   *
-   * @param dimension
-   * @param dimList
-   * @return
-   */
-  public static boolean contain(Dimension dimension, Dimension[] dimList) {
-    for (Dimension dim : dimList) {
-      if (dim.getHierName().equals(dimension.getHierName()) && dim.getDimName()
-          .equals(dimension.getDimName()) && dim.getName().equals(dimension.getName())) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  /**
-   * @param generator
-   * @param maskedKeyRanges
-   * @param ranges
-   * @param byteIndexs
-   * @param key
-   * @return
-   * @throws KeyGenException
-   */
-  private static byte[] getMaskedKey(KeyGenerator generator, int[] maskedKeyRanges,
-      List<Integer> ranges, int[] byteIndexs, long[] key) throws KeyGenException {
-    byte[] mdKey = generator.generateKey(key);
-
-    byte[] maskedKey = new byte[byteIndexs.length];
-
-    for (int i = 0; i < byteIndexs.length; i++) {
-      maskedKey[i] = mdKey[byteIndexs[i]];
-    }
-    for (int i = 0; i < byteIndexs.length; i++) {
-      for (int k = 0; k < maskedKeyRanges.length; k++) {
-        if (byteIndexs[i] == maskedKeyRanges[k]) {
-          ranges.add(k);
-          break;
-        }
-      }
-    }
-
-    return maskedKey;
   }
 
   /**

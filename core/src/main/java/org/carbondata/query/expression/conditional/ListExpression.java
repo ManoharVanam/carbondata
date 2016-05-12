@@ -45,12 +45,10 @@ public class ListExpression extends Expression {
   }
 
   @Override public ExpressionType getFilterExpressionType() {
-    // TODO Auto-generated method stub
     return ExpressionType.LIST;
   }
 
   @Override public String getString() {
-    // TODO Auto-generated method stub
     return null;
   }
 

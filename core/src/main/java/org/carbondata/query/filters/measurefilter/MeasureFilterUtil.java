@@ -23,94 +23,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.carbondata.core.constants.CarbonCommonConstants;
-import org.carbondata.core.metadata.CarbonMetadata.Measure;
-import org.carbondata.query.filters.measurefilter.util.MeasureFilterFactory;
 
 public final class MeasureFilterUtil {
   private MeasureFilterUtil() {
 
   }
 
-  /**
-   * filterMeasures
-   *
-   * @param result
-   * @param msrConstaints
-   * @param msrStartIndex
-   * @return
-   */
-  public static double[][] filterMeasures(double[][] result,
-      GroupMeasureFilterModel[] msrConstaints, int msrStartIndex, List<Measure> measures) {
-
-    MeasureFilter[] measureFilters =
-        MeasureFilterFactory.getFilterMeasures(msrConstaints, measures);
-
-    if (!isMsrFilterEnabled(measureFilters)) {
-      return result;
-    }
-    List<double[]> tempResult = new ArrayList<double[]>(result.length);
-
-    LOOP:
-    for (int i = 0; i < result.length; i++) {
-
-      for (int k = 0; k < measureFilters.length; k++) {
-        if (!(measureFilters[k].filter(result[i], msrStartIndex))) {
-          continue LOOP;
-        }
-      }
-      tempResult.add(result[i]);
-    }
-
-    return tempResult.toArray(new double[tempResult.size()][]);
-  }
-
-  //    /**
-  //     * Create the measure filters
-  //     * @param msrConstaints
-  //     * @return
-  //     */
-  //    public static MeasureFilter[][] getMsrFilters(MeasureFilterModel[][] msrConstaints)
-  //    {
-  //        MeasureFilter[][] measureFilters = new MeasureFilter[msrConstaints.length][];
-  //        for(int i = 0;i < measureFilters.length;i++)
-  //        {
-  //            if(msrConstaints[i] != null)
-  //            {
-  //                measureFilters[i] = MeasureFilterFactory.getMeasureFilter(msrConstaints[i]);
-  //            }
-  //        }
-  //        return measureFilters;
-  //    }
-
-  /**
-   * calculateAvgsAndUpdateData
-   *
-   * @param result
-   * @param avgIndexes
-   * @param countMsrIndex
-   * @param msrCount
-   * @param dimCount
-   */
-  public static void calculateAvgsAndUpdateData(double[][] result, List<Integer> avgIndexes,
-      int countMsrIndex, int msrCount, int dimCount) {
-    if (avgIndexes.size() == 0 || countMsrIndex < 0) {
-      return;
-    }
-
-    for (int k = 0; k < result.length; k++) {
-
-      for (int i = 0; i < msrCount; i++) {
-        if (avgIndexes.contains(i)) {
-          if (result[k][dimCount + countMsrIndex] == 0) {
-            result[k][dimCount + i] = 0;
-          } else {
-            result[k][dimCount + i] = result[k][dimCount + i] / result[k][dimCount + countMsrIndex];
-          }
-        }
-      }
-    }
-
-  }
 
   /**
    * getMsrFilterIndexes

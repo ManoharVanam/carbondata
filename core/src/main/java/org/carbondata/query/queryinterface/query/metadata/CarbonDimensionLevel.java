@@ -41,19 +41,6 @@ public class CarbonDimensionLevel extends AbstractCarbonLevel {
   private String levelName;
 
   /**
-   * Constructor
-   *
-   * @param dimensionName
-   * @param hierarchyName
-   * @param levelName
-   */
-  public CarbonDimensionLevel(String dimensionName, String hierarchyName, String levelName) {
-    this.dimensionName = dimensionName;
-    this.hierarchyName = hierarchyName;
-    this.levelName = levelName;
-  }
-
-  /**
    * @return the dimensionName
    */
   public String getDimensionName() {

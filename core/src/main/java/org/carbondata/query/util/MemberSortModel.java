@@ -139,11 +139,4 @@ public class MemberSortModel implements Comparable<MemberSortModel> {
     return key;
   }
 
-  public String getMemberName() {
-    return memberName;
-  }
-
-  public byte[] getMemberBytes() {
-    return memberBytes;
-  }
 }

@@ -33,7 +33,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -149,14 +148,6 @@ public final class InMemoryTableStore {
   }
 
   /**
-   * @param name
-   * @return
-   */
-  public CarbonDef.Cube getCarbonCube(String name) {
-    return cubeNameAndCubeMap.get(name);
-  }
-
-  /**
    * @param cubeKey
    * @return
    */
@@ -184,19 +175,6 @@ public final class InMemoryTableStore {
    */
   public void clearTableAndCurrentRSMap(String key) {
     tableAndCurrentRSMap.remove(key);
-  }
-
-  /**
-   * Clears the cache
-   *
-   * @throws Exception
-   */
-  public void flushCache() {
-    LOGGER.info("Removed all cubes from cache : ");
-    cubeSliceMap.clear();
-    queryExecuteStatusMap.clear();
-    cubeNameAndCubeMap.clear();
-    mapCubeToSchema.clear();
   }
 
   /**
@@ -586,52 +564,6 @@ public final class InMemoryTableStore {
   }
 
   /**
-   * This method will check and load all the required levels in memory if they
-   * are not loaded and fail in case the levels cannot be loaded
-   *
-   * @param cubeUniqueName
-   * @param columns
-   * @param listLoadFolders
-   * @return
-   * @throws Exception
-   */
-  public List<String> loadRequiredLevels(final String cubeUniqueName, Set<String> columns,
-      List<String> listLoadFolders) throws RuntimeException {
-    List<LevelInfo> notLoadedLevels =
-        new ArrayList<LevelInfo>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-    List<String> levelCacheKeys =
-        new ArrayList<String>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-    for (String colName : columns) {
-      for (String load : listLoadFolders) {
-        String key = cubeUniqueName + '_' + load + '_' + colName;
-        checkAndAddToUnloadedLevelList(levelCacheKeys, notLoadedLevels, key);
-      }
-    }
-    if (notLoadedLevels.size() > 0) {
-      int retryCount = 0;
-      long retryTimeInterval = CarbonUtil.getRetryIntervalForLoadingLevelFile();
-      while (!removeAndLoadLevelsIfRequired(levelCacheKeys, cubeUniqueName, notLoadedLevels)) {
-        waitToAcquireCube(retryTimeInterval);
-        checkLevelLoadedStatus(cubeUniqueName, levelCacheKeys, notLoadedLevels);
-        if (notLoadedLevels.isEmpty()) {
-          break;
-        }
-        retryCount++;
-        if (CarbonCommonConstants.MAX_RETRY_COUNT == retryCount) {
-          for (String key : levelCacheKeys) {
-            updateLevelAccessCountInLRUCache(key);
-          }
-          throw new RuntimeException(
-              "Required level files cannot be loaded in memory as size limit" + " exceeded");
-        }
-      }
-    }
-    // return the level cache keys so that after completion there access
-    // count can be decremented
-    return levelCacheKeys;
-  }
-
-  /**
    * @param levelCacheKeys
    * @param notLoadedLevels
    * @param key
@@ -885,44 +817,6 @@ public final class InMemoryTableStore {
    *
    * @param deltaCube
    */
-  public void registerSlice(InMemoryTable deltaCube, RestructureStore rsStore) {
-    String cubeUniqueName = deltaCube.getCubeUniqueName();
-    LOGGER.debug("Adding new slice " + deltaCube.getID() + "For cube " + cubeUniqueName);
-    if (null == cubeSliceMap.get(cubeUniqueName)) {
-      List<RestructureStore> inMemoryCube =
-          new ArrayList<RestructureStore>(CarbonCommonConstants.CONSTANT_SIZE_TEN);
-      deltaCube.setRsStore(rsStore);
-      inMemoryCube.add(rsStore);
-      cubeSliceMap.put(cubeUniqueName, inMemoryCube);
-    } else {
-      cubeSliceMap.get(cubeUniqueName).add(rsStore);
-    }
-  }
-
-  /**
-   * @param rsFolder
-   * @return
-   */
-  public RestructureStore findRestructureStore(String cubeUniqueName, String rsFolder) {
-    List<RestructureStore> rsStores = cubeSliceMap.get(cubeUniqueName);
-
-    if (rsStores == null) {
-      return null;
-    }
-
-    for (RestructureStore rsStore : rsStores) {
-      if (rsStore.getFolderName().equals(rsFolder)) {
-        return rsStore;
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Add the slice to cube.
-   *
-   * @param deltaCube
-   */
   public void unRegisterSlice(String cubeUniqueName, InMemoryTable deltaCube) {
     if (cubeUniqueName != null && deltaCube != null) {
       cubeSliceMap.get(cubeUniqueName).remove(deltaCube);
@@ -958,22 +852,6 @@ public final class InMemoryTableStore {
     List<Long> slices = new ArrayList<Long>(CarbonCommonConstants.CONSTANT_SIZE_TEN);
     for (RestructureStore rsStore : cubeSliceMap.get(cubeUniqueName)) {
       rsStore.getActiveSliceIds(slices);
-    }
-    return slices;
-  }
-
-  /**
-   * Give the Slice references for given list of id values.
-   *
-   * @param ids
-   * @return
-   */
-  public List<InMemoryTable> getSllicesbyIds(String cubeUniqueName, List<Long> ids) {
-    List<InMemoryTable> slices =
-        new ArrayList<InMemoryTable>(CarbonCommonConstants.CONSTANT_SIZE_TEN);
-
-    for (RestructureStore rsStore : cubeSliceMap.get(cubeUniqueName)) {
-      rsStore.getSlicesByIds(ids, slices);
     }
     return slices;
   }
@@ -1029,50 +907,6 @@ public final class InMemoryTableStore {
   }
 
   /**
-   * judge if the query can be executed or waiting While switch for
-   * Restructuring of data is in progess, the query will be wait
-   *
-   * @return
-   */
-  public boolean isQueryWaiting(String cubeUniqueName) {
-    return getQueryExecuteStatus(cubeUniqueName) == InMemoryTableStore.QUERY_WAITING;
-  }
-
-  /**
-   * judge if the query can be executed or blocked. While Restructuring of
-   * schema is in progess, the query will be blocked
-   */
-  public boolean isQueryBlock(String cubeUniqueName) {
-    return getQueryExecuteStatus(cubeUniqueName) == QUERY_BLOCK
-        || getQueryExecuteStatus(cubeUniqueName) == QUERY_FINISHED_FOR_RELOAD;
-  }
-
-  /**
-   * ETL inform mondrian the schema XML file has published then flush Schema
-   * in CarbonSchema.Pool And Reload it, in order to reload the in-memory cache
-   * that has been clear
-   */
-  public void informSchemaPublished(String schemaName) {
-    Set<Entry<String, CarbonDef.Schema>> entrySet = mapCubeToSchema.entrySet();
-    boolean hasReCreate = false;
-    for (Iterator<Entry<String, CarbonDef.Schema>> iter = entrySet.iterator(); iter.hasNext(); ) {
-      Entry<String, CarbonDef.Schema> entry = iter.next();
-
-      if (entry.getValue().getName().equals(schemaName)) {
-        // flush schema model in CarbonSchema.Pool
-        // remove entry
-        iter.remove();
-        // re create connection (load in-memory).Because there are 1
-        // more cubes map to the schema, so use a flag to control only
-        // re create one time
-        if (!hasReCreate) {
-          hasReCreate = true;
-        }
-      }
-    }
-  }
-
-  /**
    * get waiting type of cube. if not exist,then init as QUERY_AVAILABLE
    */
   public byte getQueryExecuteStatus(String cubeUniqueName) {
@@ -1088,24 +922,6 @@ public final class InMemoryTableStore {
    */
   public void setQueryExecuteStatus(String cubeUniqueName, byte queryExecuteStatus) {
     queryExecuteStatusMap.put(cubeUniqueName, queryExecuteStatus);
-  }
-
-  /**
-   * get the status if sliceList is in iterating
-   */
-  public boolean isSliceListConcurrent() {
-    return SLICE_LIST_CONCURRENT;
-  }
-
-  /**
-   * switch After Restructure of Data, make the query wait and then clean
-   * queries and InMemory cache, then reload to InMemory cache.
-   */
-  public void switchAfterRestructureData(List<String> cubeUniqueNames) {
-    for (String cubeUniqueName : cubeUniqueNames) {
-      setQueryExecuteStatus(cubeUniqueName, QUERY_WAITING);
-      clearQueriesAndSlices(cubeUniqueName);
-    }
   }
 
   /**
@@ -1126,13 +942,5 @@ public final class InMemoryTableStore {
         tableAndCurrentRSMap.put(tableName, currentRSNumber);
       }
     }
-  }
-
-  public int getTableRSNumber(String tableName) {
-    Integer rsNumber = tableAndCurrentRSMap.get(tableName);
-    if (null == rsNumber) {
-      return -1;
-    }
-    return rsNumber;
   }
 }

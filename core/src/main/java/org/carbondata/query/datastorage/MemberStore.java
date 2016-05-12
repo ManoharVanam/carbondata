@@ -113,13 +113,6 @@ public class MemberStore {
   }
 
   /**
-   * @return
-   */
-  public int getCardinality() {
-    return cache.length + min;
-  }
-
-  /**
    * Table for member is nothing but the column name.
    */
   public String getTableForMember() {
@@ -136,27 +129,6 @@ public class MemberStore {
   }
 
   /**
-   * Getter for level
-   */
-  public CarbonDef.Level getCarbonLevel() {
-    return carbonLevel;
-  }
-
-  /**
-   * Get level name
-   */
-  public String getLevelName() {
-    return levelName;
-  }
-
-  /**
-   * @param lName
-   */
-  public void setLevelName(String lName) {
-    levelName = lName;
-  }
-
-  /**
    *
    */
   public void clear() {
@@ -170,21 +142,6 @@ public class MemberStore {
     sortReverseOrderIndex = null;
     sortReverseOrderIndexSize = 0;
     sortOrderIndexSize = 0;
-  }
-
-  /**
-   * @return
-   */
-  public long getMaxValue() {
-    return maxMember;
-  }
-
-  /**
-   * @param name
-   * @return
-   */
-  public int getMemberId(String name) {
-    return getMemberId(name, false);
   }
 
   /**

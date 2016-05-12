@@ -164,7 +164,6 @@ public class CarbonGroupByStepMeta extends BaseStepMeta implements StepMetaInter
    */
   @Override public void readRep(Repository rep, ObjectId idStep, List<DatabaseMeta> databases,
       Map<String, Counter> counters) throws KettleException {
-    // TODO Auto-generated method stub
     try {
       aggTypeString = rep.getStepAttributeString(idStep, "aggTypeString");
       columnName = rep.getStepAttributeString(idStep, "columnName");
@@ -172,7 +171,6 @@ public class CarbonGroupByStepMeta extends BaseStepMeta implements StepMetaInter
       outputRowSize = rep.getStepAttributeString(idStep, "outputRowSize");
 
     } catch (Exception ex) {
-      // TODO Auto-generated catch block
       throw new KettleException(BaseMessages
           .getString(PKG, "CarbonDataWriterStepMeta.Exception.UnexpectedErrorInReadingStepInfo"),
           ex);

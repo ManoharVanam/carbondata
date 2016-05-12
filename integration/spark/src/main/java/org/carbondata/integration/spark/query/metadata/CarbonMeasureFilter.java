@@ -39,46 +39,6 @@ public class CarbonMeasureFilter implements Serializable {
   private CarbonMeasureFilterType filterType = CarbonMeasureFilterType.EQUAL_TO;
 
   /**
-   * This constructor would be used only when user uses NOT_EMPTY filter type.
-   * Ex: select employee_name sum(salary) from employee where salary is not empty.so it will
-   * filter out all salary rows which
-   * has null in the DB.
-   *
-   * @param filterType
-   */
-  public CarbonMeasureFilter(CarbonMeasureFilterType filterType) {
-    this.filterType = filterType;
-  }
-
-  /**
-   * This constructor would be used for single operand filters like EQUAL_TO,NOT_EQUAL_TO,
-   * GREATER_THAN,GREATER_THAN_EQUAL_TO,
-   * LESS_THAN,LESS_THAN_EQUAL_TO.
-   * Ex: select employee_name sum(salary) from employee where salary> 10000.So here 10000 is
-   * opearndOne and GREATER_THAN is the filterType
-   *
-   * @param operandOne
-   * @param filterType
-   */
-  public CarbonMeasureFilter(double operandOne, CarbonMeasureFilterType filterType) {
-    this.filterType = filterType;
-  }
-
-  /**
-   * This constructor would be used for double operand filters like BETWEEN.
-   * Ex: select employee_name sum(salary) from employee where salary between 5000 and 10000.
-   * So here 5000 is opearndOne,10000 is operandTwo and BETWEEN is the filterType
-   *
-   * @param operandOne
-   * @param operandTwo
-   * @param filterType
-   */
-  public CarbonMeasureFilter(double operandOne, double operandTwo,
-      CarbonMeasureFilterType filterType) {
-    this.filterType = filterType;
-  }
-
-  /**
    * @return the filterType
    */
   public CarbonMeasureFilterType getFilterType() {

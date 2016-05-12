@@ -34,18 +34,6 @@ public class GroupMeasureFilterModel extends MeasureFilterModel {
   private MeasureFilterGroupType filterGroupType;
 
   /**
-   * GroupMeasureFilterModel
-   *
-   * @param filterModels
-   * @param filterGroupType
-   */
-  public GroupMeasureFilterModel(MeasureFilterModel[][] filterModels,
-      MeasureFilterGroupType filterGroupType) {
-    this.filterModels = filterModels;
-    this.filterGroupType = filterGroupType;
-  }
-
-  /**
    * getFilterModels
    *
    * @return the filterModels

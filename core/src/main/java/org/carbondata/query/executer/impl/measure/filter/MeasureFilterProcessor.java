@@ -51,16 +51,6 @@ public class MeasureFilterProcessor implements DataProcessor {
 
   private boolean afterTopN;
 
-  /**
-   * MeasureFilterProcessor Constructor
-   *
-   * @param dataProcessor
-   */
-  public MeasureFilterProcessor(DataProcessor dataProcessor, boolean afterTopN) {
-    this.dataProcessor = dataProcessor;
-    this.afterTopN = afterTopN;
-  }
-
   @Override public void initModel(PaginationModel model) throws CarbonPaginationException {
 
     this.dataProcessor.initModel(model);

@@ -29,14 +29,10 @@ import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import org.carbondata.common.logging.LogService;
@@ -52,10 +48,8 @@ import org.carbondata.core.carbon.CarbonDef.AggLevel;
 import org.carbondata.core.carbon.CarbonDef.AggMeasure;
 import org.carbondata.core.carbon.CarbonDef.AggName;
 import org.carbondata.core.carbon.CarbonDef.AggTable;
-import org.carbondata.core.carbon.CarbonDef.CubeDimension;
 import org.carbondata.core.carbon.CarbonDef.Schema;
 import org.carbondata.core.carbon.CarbonTableIdentifier;
-import org.carbondata.core.carbon.datastore.block.TableBlockInfo;
 import org.carbondata.core.carbon.metadata.datatype.DataType;
 import org.carbondata.core.carbon.metadata.schema.table.CarbonTable;
 import org.carbondata.core.carbon.metadata.schema.table.column.CarbonDimension;
@@ -76,14 +70,11 @@ import org.carbondata.core.metadata.CarbonMetadata.Cube;
 import org.carbondata.core.util.CarbonProperties;
 import org.carbondata.core.util.CarbonUtil;
 import org.carbondata.core.util.CarbonUtilException;
-import org.carbondata.integration.spark.merger.NodeBlockRelation;
 import org.carbondata.processing.api.dataloader.DataLoadModel;
 import org.carbondata.processing.api.dataloader.SchemaInfo;
 import org.carbondata.processing.csvload.DataGraphExecuter;
 import org.carbondata.processing.dataprocessor.DataProcessTaskStatus;
 import org.carbondata.processing.dataprocessor.IDataProcessStatus;
-import org.carbondata.processing.globalsurrogategenerator.GlobalSurrogateGenerator;
-import org.carbondata.processing.globalsurrogategenerator.GlobalSurrogateGeneratorInfo;
 import org.carbondata.processing.graphgenerator.GraphGenerator;
 import org.carbondata.processing.graphgenerator.GraphGeneratorException;
 import org.carbondata.processing.util.CarbonDataProcessorUtil;
@@ -410,14 +401,6 @@ public final class CarbonLoaderUtil {
     return updatedSlices;
   }
 
-  public static String getMetaDataFilePath(String schemaName, String cubeName,
-      String hdfsStoreLocation) {
-    String basePath = hdfsStoreLocation;
-    String schemaPath = basePath.substring(0, basePath.lastIndexOf("/"));
-    String metadataFilePath = schemaPath + "/schemas/" + schemaName + '/' + cubeName;
-    return metadataFilePath;
-  }
-
   public static void removeSliceFromMemory(String schemaName, String cubeName, String loadName) {
     List<InMemoryTable> activeSlices =
         InMemoryTableStore.getInstance().getActiveSlices(schemaName + '_' + cubeName);
@@ -671,21 +654,6 @@ public final class CarbonLoaderUtil {
     }
   }
 
-  public static void generateGlobalSurrogates(CarbonLoadModel loadModel, String storeLocation,
-      int numberOfPartiiton, String[] partitionColumn, CubeDimension[] dims,
-      int currentRestructNumber) {
-    GlobalSurrogateGeneratorInfo generatorInfo = new GlobalSurrogateGeneratorInfo();
-    generatorInfo.setCubeName(loadModel.getTableName());
-    generatorInfo.setSchema(loadModel.getSchema());
-    generatorInfo.setStoreLocation(storeLocation);
-    generatorInfo.setTableName(loadModel.getTableName());
-    generatorInfo.setNumberOfPartition(numberOfPartiiton);
-    generatorInfo.setPartiontionColumnName(partitionColumn[0]);
-    generatorInfo.setCubeDimensions(dims);
-    GlobalSurrogateGenerator generator = new GlobalSurrogateGenerator(generatorInfo);
-    generator.generateGlobalSurrogates(currentRestructNumber);
-  }
-
   private static void renameFactFile(String localStoreLocation) {
     FileType fileType = FileFactory.getFileType(localStoreLocation);
     try {
@@ -708,24 +676,6 @@ public final class CarbonLoaderUtil {
     } catch (IOException e) {
       LOGGER.error("Inside renameFactFile. Problem checking file existence :: " + e.getMessage());
     }
-  }
-
-  /**
-   * API will provide the load number inorder to record the same in metadata file.
-   */
-  public static int getLoadCount(CarbonLoadModel loadModel, int currentRestructNumber)
-      throws IOException {
-
-    String hdfsLoadedTable = getLoadFolderPath(loadModel, null, null, currentRestructNumber);
-    int loadCounter = CarbonUtil.checkAndReturnCurrentLoadFolderNumber(hdfsLoadedTable);
-
-    String hdfsStoreLoadFolder =
-        hdfsLoadedTable + File.separator + CarbonCommonConstants.LOAD_FOLDER + loadCounter;
-    hdfsStoreLoadFolder = hdfsStoreLoadFolder.replace("\\", "/");
-
-    String loadFolerCount = hdfsStoreLoadFolder
-        .substring(hdfsStoreLoadFolder.lastIndexOf('_') + 1, hdfsStoreLoadFolder.length());
-    return Integer.parseInt(loadFolerCount) + 1;
   }
 
   /**
@@ -863,19 +813,6 @@ public final class CarbonLoaderUtil {
 
   }
 
-  public static String extractLoadMetadataFileLocation(Schema schema, String schemaName,
-      String cubeName) {
-    Cube cube = CarbonMetadata.getInstance().getCube(schemaName + '_' + cubeName);
-    if (null == cube) {
-      //Schema schema = loadModel.getSchema();
-      CarbonDef.Cube mondrianCube = CarbonSchemaParser.getMondrianCube(schema, cubeName);
-      CarbonMetadata.getInstance().loadCube(schema, schema.name, mondrianCube.name, mondrianCube);
-      cube = CarbonMetadata.getInstance().getCube(schemaName + '_' + cubeName);
-    }
-
-    return cube.getMetaDataFilepath();
-  }
-
   public static String readCurrentTime() {
     SimpleDateFormat sdf = new SimpleDateFormat(CarbonCommonConstants.CARBON_TIMESTAMP);
     String date = null;
@@ -883,39 +820,6 @@ public final class CarbonLoaderUtil {
     date = sdf.format(new Date());
 
     return date;
-  }
-
-  public static CarbonDimension[][] getDimensionSplit(CarbonDataLoadSchema schema, String cubeName,
-      int numberOfPartition) {
-
-    List<CarbonDimension> allDims = schema.getCarbonTable().getDimensionByTableName(cubeName);
-    List<CarbonMeasure> msrs = schema.getCarbonTable().getMeasureByTableName(cubeName);
-    List<CarbonDimension> selectedDims =
-        new ArrayList<CarbonDimension>(CarbonCommonConstants.CONSTANT_SIZE_TEN);
-    for (int i = 0; i < allDims.size(); i++) {
-      for (int j = 0; j < msrs.size(); j++) {
-        if (selectedDims.get(j).getColName().equals(msrs.get(j).getColName())) {
-          selectedDims.add(allDims.get(i));
-        }
-      }
-    }
-    CarbonDimension[] allDimsArr = selectedDims.toArray(new CarbonDimension[selectedDims.size()]);
-    if (allDimsArr.length < 1) {
-      return new CarbonDimension[0][0];
-    }
-    int[] numberOfNodeToScanForEachThread =
-        getNumberOfNodeToScanForEachThread(allDimsArr.length, numberOfPartition);
-    CarbonDimension[][] out = new CarbonDimension[numberOfNodeToScanForEachThread.length][];
-    int counter = 0;
-
-    for (int i = 0; i < numberOfNodeToScanForEachThread.length; i++) {
-      out[i] = new CarbonDimension[numberOfNodeToScanForEachThread[i]];
-      for (int j = 0; j < numberOfNodeToScanForEachThread[i]; j++) {
-        out[i][j] = allDimsArr[counter++];
-      }
-    }
-
-    return out;
   }
 
   private static int[] getNumberOfNodeToScanForEachThread(int numberOfNodes, int numberOfCores) {
@@ -1112,164 +1016,4 @@ public final class CarbonLoaderUtil {
         new DictionaryColumnUniqueIdentifier(tableIdentifier, columnIdentifier, dataType),
         carbonStorePath);
   }
-
-  /**
-   * This method will divide the blocks among the nodes as per the data locality
-   *
-   * @param blockNodes
-   * @param numberOfBlocks
-   * @param numberOfNodes
-   * @return
-   */
-  public static Map<String, List<TableBlockInfo>> nodeBlockMapping(
-      Map<TableBlockInfo, List<String>> blockNodes, int numberOfBlocks, int numberOfNodes) {
-
-    Map<String, List<TableBlockInfo>> outputMap =
-        new HashMap<String, List<TableBlockInfo>>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-
-    int blocksPerNode = numberOfBlocks / numberOfNodes;
-
-    List<NodeBlockRelation> flattenedList =
-        new ArrayList<NodeBlockRelation>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-
-    Set<TableBlockInfo> uniqueBlocks =
-        new HashSet<TableBlockInfo>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-
-    createFlattenedListFromMap(blockNodes, flattenedList, uniqueBlocks);
-    // sort the flattened data.
-    Collections.sort(flattenedList);
-
-    Map<String, List<TableBlockInfo>> nodeAndBlockMapping =
-        new LinkedHashMap<String, List<TableBlockInfo>>(
-            CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-
-    // from the flattened list create a mapping of node vs Data blocks.
-    createNodeVsBlockMapping(flattenedList, nodeAndBlockMapping);
-
-    // so now we have a map of node vs blocks. allocate the block as per the order
-    createOutputMap(outputMap, blocksPerNode, uniqueBlocks, nodeAndBlockMapping);
-
-    // if any blocks remain then assign them to nodes in round robin.
-    assignLeftOverBlocks(outputMap, uniqueBlocks);
-
-    return outputMap;
-  }
-
-  /**
-   * If any left over data blocks are present then assign those to nodes in round robin way.
-   *
-   * @param outputMap
-   * @param uniqueBlocks
-   */
-  private static void assignLeftOverBlocks(Map<String, List<TableBlockInfo>> outputMap,
-      Set<TableBlockInfo> uniqueBlocks) {
-    for (Map.Entry<String, List<TableBlockInfo>> entry : outputMap.entrySet()) {
-
-      Iterator<TableBlockInfo> blocks = uniqueBlocks.iterator();
-
-      if (blocks.hasNext()) {
-        TableBlockInfo block = blocks.next();
-        List<TableBlockInfo> blockLst = entry.getValue();
-        blockLst.add(block);
-        blocks.remove();
-
-      }
-    }
-  }
-
-  /**
-   * To create the final output of the Node and Data blocks
-   *
-   * @param outputMap
-   * @param blocksPerNode
-   * @param uniqueBlocks
-   * @param nodeAndBlockMapping
-   */
-  private static void createOutputMap(Map<String, List<TableBlockInfo>> outputMap,
-      int blocksPerNode, Set<TableBlockInfo> uniqueBlocks,
-      Map<String, List<TableBlockInfo>> nodeAndBlockMapping) {
-    for (Map.Entry<String, List<TableBlockInfo>> entry : nodeAndBlockMapping.entrySet()) {
-
-      // this loop will be for each NODE
-      int nodeCapacity = 0;
-
-      List<TableBlockInfo> blocksInEachNode = entry.getValue();
-
-      // loop thru blocks of each Node
-      for (TableBlockInfo block : blocksInEachNode) {
-
-        // check if this is already assigned.
-        if (uniqueBlocks.contains(block)) {
-
-          // assign this block to this node if node has capacity left
-          if (nodeCapacity < blocksPerNode) {
-
-            List<TableBlockInfo> list;
-            if (null == outputMap.get(entry.getKey())) {
-
-              list = new ArrayList<TableBlockInfo>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-              list.add(block);
-              outputMap.put(entry.getKey(), list);
-
-            } else {
-              list = outputMap.get(entry.getKey());
-              list.add(block);
-
-            }
-            nodeCapacity++;
-            uniqueBlocks.remove(block);
-          } else {
-            // No need to continue loop as node is full
-            break;
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * Create the Node and its related blocks Mapping and put in a Map
-   *
-   * @param flattenedList
-   * @param nodeAndBlockMapping
-   */
-  private static void createNodeVsBlockMapping(List<NodeBlockRelation> flattenedList,
-      Map<String, List<TableBlockInfo>> nodeAndBlockMapping) {
-    for (NodeBlockRelation nbr : flattenedList) {
-      String node = nbr.getNode();
-      List<TableBlockInfo> list;
-
-      if (null == nodeAndBlockMapping.get(node)) {
-        list = new ArrayList<TableBlockInfo>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
-        list.add(nbr.getBlock());
-        Collections.sort(list);
-        nodeAndBlockMapping.put(node, list);
-      } else {
-        list = nodeAndBlockMapping.get(node);
-        list.add(nbr.getBlock());
-        Collections.sort(list);
-      }
-    }
-  }
-
-  /**
-   * Create the flat List i.e flattening of the Map.
-   *
-   * @param blockNodes
-   * @param flattenedList
-   * @param uniqueBlocks
-   */
-  private static void createFlattenedListFromMap(Map<TableBlockInfo, List<String>> blockNodes,
-      List<NodeBlockRelation> flattenedList, Set<TableBlockInfo> uniqueBlocks) {
-    for (Map.Entry<TableBlockInfo, List<String>> eachEntry : blockNodes.entrySet()) {
-      // put the blocks in the set
-      uniqueBlocks.add(eachEntry.getKey());
-
-      for (String eachNode : eachEntry.getValue()) {
-        NodeBlockRelation nbr = new NodeBlockRelation(eachEntry.getKey(), eachNode);
-        flattenedList.add(nbr);
-      }
-    }
-  }
-
 }

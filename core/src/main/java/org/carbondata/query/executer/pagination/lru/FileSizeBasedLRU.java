@@ -28,8 +28,6 @@ import java.util.Map;
 
 import org.carbondata.common.logging.LogService;
 import org.carbondata.common.logging.LogServiceFactory;
-import org.carbondata.core.constants.CarbonCommonConstants;
-import org.carbondata.core.util.CarbonProperties;
 
 public class FileSizeBasedLRU {
 
@@ -110,34 +108,6 @@ public class FileSizeBasedLRU {
   }
 
   /**
-   * Get instance of class
-   *
-   * @param hashMap
-   * @return
-   */
-  public static synchronized FileSizeBasedLRU getInstance() {
-    if (lru == null) {
-      long mem = 0;
-      try {
-        mem = Long.parseLong(CarbonProperties.getInstance()
-            .getProperty(CarbonCommonConstants.PAGINATED_CACHE_DISK_SIZE,
-                CarbonCommonConstants.PAGINATED_CACHE_DISK_SIZE_DEFAULT.toString()));
-      } catch (NumberFormatException e) {
-        mem = CarbonCommonConstants.PAGINATED_CACHE_DISK_SIZE_DEFAULT;
-        LOGGER
-            .error("Exception while parsing property");
-      }
-      mem = CarbonProperties.getInstance()
-          .validate(mem, CarbonCommonConstants.PAGINATED_CACHE_DISK_SIZE_MAX,
-              CarbonCommonConstants.PAGINATED_CACHE_DISK_SIZE_MIN,
-              CarbonCommonConstants.PAGINATED_CACHE_DISK_SIZE_DEFAULT);
-      LOGGER.info("Query Lru Cache has been intilaized with limit " + mem + " MB");
-      lru = new FileSizeBasedLRU(3000, mem * 1024 * 1024);
-    }
-    return lru;
-  }
-
-  /**
    * Put the key
    *
    * @param key
@@ -184,7 +154,6 @@ public class FileSizeBasedLRU {
    * To string
    */
   @Override public String toString() {
-    // TODO Auto-generated method stub
     return fCacheMap.toString();
   }
 

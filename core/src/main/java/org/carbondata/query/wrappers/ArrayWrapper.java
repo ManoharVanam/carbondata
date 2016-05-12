@@ -34,10 +34,6 @@ public class ArrayWrapper implements Serializable, Comparable<ArrayWrapper> {
    */
   private long[] data;
 
-  public ArrayWrapper(long[] data) {
-    initialize(data);
-  }
-
   /**
    * This method is used to initialize data array
    *

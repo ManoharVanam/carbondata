@@ -34,11 +34,6 @@ import org.carbondata.common.logging.LogService;
 import org.carbondata.common.logging.LogServiceFactory;
 import org.carbondata.core.carbon.CarbonDataLoadSchema;
 import org.carbondata.core.carbon.CarbonDataLoadSchema.DimensionRelation;
-import org.carbondata.core.carbon.CarbonDef.Cube;
-import org.carbondata.core.carbon.CarbonDef.CubeDimension;
-import org.carbondata.core.carbon.CarbonDef.Hierarchy;
-import org.carbondata.core.carbon.CarbonDef.Level;
-import org.carbondata.core.carbon.CarbonDef.Schema;
 import org.carbondata.core.carbon.metadata.schema.table.column.CarbonDimension;
 import org.carbondata.core.carbon.metadata.schema.table.column.CarbonMeasure;
 import org.carbondata.core.constants.CarbonCommonConstants;
@@ -48,7 +43,6 @@ import org.carbondata.core.datastorage.store.impl.FileFactory;
 import org.carbondata.core.datastorage.store.impl.FileFactory.FileType;
 import org.carbondata.core.util.CarbonUtil;
 import org.carbondata.processing.etl.DataLoadingException;
-import org.carbondata.processing.util.CarbonSchemaParser;
 
 import org.pentaho.di.trans.steps.textfileinput.TextFileInputField;
 
@@ -345,31 +339,6 @@ public final class GraphExecutionUtil {
     }
 
     return false;
-  }
-
-  /**
-   * @param cube
-   * @param schema
-   * @return
-   */
-  public static boolean checkLevelCardinalityExists(Cube cube, Schema schema) {
-    CubeDimension[] dimensions = cube.dimensions;
-
-    for (CubeDimension dimension : dimensions) {
-      Hierarchy[] extractHierarchies = CarbonSchemaParser.extractHierarchies(schema, dimension);
-
-      for (Hierarchy hier : extractHierarchies) {
-        Level[] levels = hier.levels;
-
-        for (Level level : levels) {
-          if (-1 == level.levelCardinality) {
-            return false;
-          }
-        }
-      }
-    }
-
-    return true;
   }
 
   public static Set<String> getDimensionColumnNames(String dimTableName,

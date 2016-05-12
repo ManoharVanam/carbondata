@@ -198,7 +198,6 @@ public class SumDistinctLongAggregator extends AbstractMeasureAggregatorBasic {
   }
 
   @Override public MeasureAggregator getNew() {
-    // TODO Auto-generated method stub
     return new SumDistinctLongAggregator();
   }
 }

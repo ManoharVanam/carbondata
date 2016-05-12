@@ -35,17 +35,14 @@ public class ParallelSliceExecutorImpl implements ParallelSliceExecutor {
 
   @Override public Map<ByteArrayWrapper, MeasureAggregator[]> executeSliceInParallel()
       throws Exception {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override public QueryResult executeSlices() throws Exception {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override public void interruptExecutor() {
-    // TODO Auto-generated method stub
 
   }
 }

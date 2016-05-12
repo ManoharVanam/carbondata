@@ -185,20 +185,6 @@ public class QueryModel implements Serializable {
   }
 
   /**
-   * @return the isAggTable
-   */
-  public boolean isAggTable() {
-    return isAggTable;
-  }
-
-  /**
-   * @param isAggTable the isAggTable to set
-   */
-  public void setAggTable(boolean isAggTable) {
-    this.isAggTable = isAggTable;
-  }
-
-  /**
    * @return the limit
    */
   public int getLimit() {
@@ -276,20 +262,6 @@ public class QueryModel implements Serializable {
   }
 
   /**
-   * @param expressions the expressions to set
-   */
-  public void setExpressions(List<CustomAggregateExpression> expressions) {
-    this.expressions = expressions;
-  }
-
-  /**
-   * @return the queryTempLocation
-   */
-  public String getQueryTempLocation() {
-    return queryTempLocation;
-  }
-
-  /**
    * @param queryTempLocation the queryTempLocation to set
    */
   public void setQueryTempLocation(String queryTempLocation) {
@@ -357,13 +329,6 @@ public class QueryModel implements Serializable {
    */
   public List<String> getParitionColumns() {
     return paritionColumns;
-  }
-
-  /**
-   * @param paritionColumns the paritionColumns to set
-   */
-  public void setParitionColumns(List<String> paritionColumns) {
-    this.paritionColumns = paritionColumns;
   }
 
   /**

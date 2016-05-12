@@ -28,13 +28,6 @@ public class ChunkRowIterator implements CarbonIterator<RowResult> {
 
   private ChunkResult currentchunk;
 
-  public ChunkRowIterator(CarbonIterator<ChunkResult> iterator) {
-    this.iterator = iterator;
-    if (iterator.hasNext()) {
-      currentchunk = iterator.next();
-    }
-  }
-
   @Override public boolean hasNext() {
     if (null != currentchunk) {
       if ((currentchunk.hasNext())) {

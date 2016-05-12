@@ -63,10 +63,6 @@ public class ColumnExpression extends LeafExpression {
     return columnName;
   }
 
-  public void setColumnName(String columnName) {
-    this.columnName = columnName;
-  }
-
   public boolean isDimension() {
     return isDimension;
   }
@@ -87,31 +83,21 @@ public class ColumnExpression extends LeafExpression {
     return dataType;
   }
 
-  public void setDataType(DataType dataType) {
-    this.dataType = dataType;
-  }
-
   @Override public ExpressionResult evaluate(RowIntf value) {
     ExpressionResult expressionResult = new ExpressionResult(dataType, value.getVal(colIndex));
     return expressionResult;
   }
 
   @Override public ExpressionType getFilterExpressionType() {
-    // TODO Auto-generated method stub
     return null;
   }
 
   @Override public String getString() {
-    // TODO Auto-generated method stub
     return "ColumnExpression(" + columnName + ')';
   }
 
   public Dimension getDim() {
     return dim;
-  }
-
-  public void setDim(Dimension dim) {
-    this.dim = dim;
   }
 
   public CarbonColumn getCarbonColumn() {

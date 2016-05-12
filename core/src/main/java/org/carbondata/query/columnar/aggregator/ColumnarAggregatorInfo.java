@@ -183,20 +183,6 @@ public class ColumnarAggregatorInfo {
   }
 
   /**
-   * @return the avgMsrIndexes
-   */
-  public int[] getAvgMsrIndexes() {
-    return avgMsrIndexes;
-  }
-
-  /**
-   * @param avgMsrIndexes the avgMsrIndexes to set
-   */
-  public void setAvgMsrIndexes(int[] avgMsrIndexes) {
-    this.avgMsrIndexes = avgMsrIndexes;
-  }
-
-  /**
    * @return the measureOrdinal
    */
   public int[] getMeasureOrdinal() {
@@ -302,14 +288,6 @@ public class ColumnarAggregatorInfo {
 
   public void setMeasureStartIndex(int measureStartIndex) {
     this.measureStartIndex = measureStartIndex;
-  }
-
-  public boolean isNonFilterQuery() {
-    return isNonFilterQuery;
-  }
-
-  public void setNonFilterQuery(boolean isNonFilterQuery) {
-    this.isNonFilterQuery = isNonFilterQuery;
   }
 
   public int[] getActalMaskedByteRanges() {

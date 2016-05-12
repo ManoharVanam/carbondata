@@ -68,36 +68,12 @@ public class CustomAggregateExpression implements Serializable {
     referredColumns = new ArrayList<CarbonColumn>(CarbonCommonConstants.DEFAULT_COLLECTION_SIZE);
   }
 
-  public String getExpression() {
-    return expression;
-  }
-
-  public void setExpression(String expression) {
-    this.expression = expression;
-  }
-
   public List<CarbonColumn> getReferredColumns() {
     return referredColumns;
   }
 
-  public void setReferredColumns(List<CarbonColumn> referredColumns) {
-    this.referredColumns = referredColumns;
-  }
-
   public int getQueryOrder() {
     return queryOrder;
-  }
-
-  public void setQueryOrder(int queryOrder) {
-    this.queryOrder = queryOrder;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
   /**
@@ -105,13 +81,6 @@ public class CustomAggregateExpression implements Serializable {
    */
   public CustomMeasureAggregator getAggregator() {
     return aggregator;
-  }
-
-  /**
-   * @param aggregator
-   */
-  public void setAggregator(CustomMeasureAggregator aggregator) {
-    this.aggregator = aggregator;
   }
 
   @Override public int hashCode() {

@@ -42,12 +42,10 @@ public class LiteralExpression extends LeafExpression {
   }
 
   @Override public ExpressionType getFilterExpressionType() {
-    // TODO Auto-generated method stub
     return ExpressionType.LITERAL;
   }
 
   @Override public String getString() {
-    // TODO Auto-generated method stub
     return "LiteralExpression(" + value + ')';
   }
 

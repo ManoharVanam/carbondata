@@ -45,13 +45,4 @@ public enum SortOrderType {
   SortOrderType(int orderType) {
     this.orderType = orderType;
   }
-
-  /**
-   * Order type in number
-   *
-   * @return orderType int
-   */
-  public int getOrderType() {
-    return orderType;
-  }
 }

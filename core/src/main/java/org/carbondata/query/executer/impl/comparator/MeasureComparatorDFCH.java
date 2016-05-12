@@ -36,17 +36,6 @@ public class MeasureComparatorDFCH implements Comparator<DataFileChunkHolder> {
   private int sortOrder;
 
   /**
-   * MeasureComparator Constructor
-   *
-   * @param msrIndex
-   * @param sortOrder
-   */
-  public MeasureComparatorDFCH(int msrIndex, int sortOrder) {
-    this.msrIndex = msrIndex;
-    this.sortOrder = sortOrder;
-  }
-
-  /**
    * This method will be used to compare two byte array
    *
    * @param o1

@@ -62,20 +62,6 @@ public class CSBInternalNode extends CSBNode {
   }
 
   /**
-   * @param nKeys the nKeys to set
-   */
-  public void setnKeys(int nKeys) {
-    this.nKeys = nKeys;
-  }
-
-  /**
-   * @return the children
-   */
-  public CSBNode[] getChildren() {
-    return children;
-  }
-
-  /**
    * @param children the children to set
    */
   public void setChildren(CSBNode[] children) {
@@ -109,10 +95,6 @@ public class CSBInternalNode extends CSBNode {
    */
   public boolean isLeafNode() {
     return false;
-  }
-
-  public void setPrevNode(CSBNode prevNode) {
-    // We shouln't ever be here
   }
 
   /**

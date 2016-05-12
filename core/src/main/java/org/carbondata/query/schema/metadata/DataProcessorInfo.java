@@ -216,25 +216,12 @@ public class DataProcessorInfo {
   }
 
   /**
-   * @return the maskedByteRangeForSorting
-   */
-  public int[][] getMaskedByteRangeForSorting() {
-    return maskedByteRangeForSorting;
-  }
-
-  /**
    * @param maskedByteRangeForSorting the maskedByteRangeForSorting to set
    */
   public void setMaskedByteRangeForSorting(final int[][] maskedByteRangeForSorting) {
     this.maskedByteRangeForSorting = maskedByteRangeForSorting;
   }
 
-  /**
-   * @return the holderSize
-   */
-  public int getHolderSize() {
-    return holderSize;
-  }
 
   /**
    * @param holderSize the holderSize to set
@@ -255,13 +242,6 @@ public class DataProcessorInfo {
    */
   public void setDimensionSortOrder(final byte[] dimensionSortOrder) {
     this.dimensionSortOrder = dimensionSortOrder;
-  }
-
-  /**
-   * @return the dimensionMasks
-   */
-  public byte[][] getDimensionMasks() {
-    return dimensionMasks;
   }
 
   /**
@@ -353,13 +333,6 @@ public class DataProcessorInfo {
    */
   public void setBlockSize(final int blockSize) {
     this.blockSize = blockSize;
-  }
-
-  /**
-   * @return the sortComparator
-   */
-  public Comparator getSortComparator() {
-    return sortComparator;
   }
 
   /**

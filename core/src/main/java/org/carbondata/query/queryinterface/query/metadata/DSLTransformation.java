@@ -44,14 +44,6 @@ public class DSLTransformation {
    */
   private boolean addAsColumn;
 
-  public DSLTransformation(String name, String dslExpression, String newColumnName,
-      boolean addAsColumn) {
-    this.name = name;
-    this.dslExpression = dslExpression;
-    this.newColumnName = newColumnName;
-    this.addAsColumn = addAsColumn;
-  }
-
   /**
    * @return Returns the name.
    */

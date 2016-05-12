@@ -104,10 +104,6 @@ public class DimColumnResolvedFilterInfo implements Serializable {
     return endIndexKey;
   }
 
-  public void setEndIndexKey(IndexKey endIndexKey) {
-    this.endIndexKey = endIndexKey;
-  }
-
   public void addDimensionResolvedFilterInstance(CarbonDimension dimension,
       DimColumnFilterInfo filterResolvedObj) {
     List<DimColumnFilterInfo> currentVals = dimensionResolvedFilter.get(dimension);
@@ -128,11 +124,6 @@ public class DimColumnResolvedFilterInfo implements Serializable {
     return complexTypesWithBlockStartIndex;
   }
 
-  public void setComplexTypesWithBlockStartIndex(
-      Map<Integer, GenericQueryType> complexTypesWithBlockStartIndex) {
-    this.complexTypesWithBlockStartIndex = complexTypesWithBlockStartIndex;
-  }
-
   public CarbonDimension getDimension() {
     return dimension;
   }
@@ -141,28 +132,12 @@ public class DimColumnResolvedFilterInfo implements Serializable {
     this.dimension = dimension;
   }
 
-  public Dimension[] getDimensions() {
-    return dimensions;
-  }
-
-  public void setDimensions(Dimension[] dimensions) {
-    this.dimensions = dimensions;
-  }
-
   public int getColumnIndex() {
     return columnIndex;
   }
 
   public void setColumnIndex(int columnIndex) {
     this.columnIndex = columnIndex;
-  }
-
-  public boolean isNeedCompressedData() {
-    return needCompressedData;
-  }
-
-  public void setNeedCompressedData(boolean needCompressedData) {
-    this.needCompressedData = needCompressedData;
   }
 
   public DimColumnFilterInfo getFilterValues() {
@@ -181,14 +156,6 @@ public class DimColumnResolvedFilterInfo implements Serializable {
     this.rowIndex = rowIndex;
   }
 
-  public Dimension getDims() {
-    return dims;
-  }
-
-  public void setDims(Dimension dims) {
-    this.dims = dims;
-  }
-
   public boolean isDimensionExistsInCurrentSilce() {
     return isDimensionExistsInCurrentSilce;
   }
@@ -197,19 +164,7 @@ public class DimColumnResolvedFilterInfo implements Serializable {
     this.isDimensionExistsInCurrentSilce = isDimensionExistsInCurrentSilce;
   }
 
-  public int getRsSurrogates() {
-    return rsSurrogates;
-  }
-
-  public void setRsSurrogates(int rsSurrogates) {
-    this.rsSurrogates = rsSurrogates;
-  }
-
   public String getDefaultValue() {
     return defaultValue;
-  }
-
-  public void setDefaultValue(String defaultValue) {
-    this.defaultValue = defaultValue;
   }
 }

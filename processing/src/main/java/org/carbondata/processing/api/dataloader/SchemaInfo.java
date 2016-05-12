@@ -66,16 +66,6 @@ public class SchemaInfo {
    */
   private String schemaPath;
 
-  /**
-   * schemaConnName
-   */
-  private String schemaConnName;
-
-  /**
-   * isBackgroundMergingRequest
-   */
-  private boolean isBackgroundMergingRequest;
-
   private String complexDelimiterLevel1;
 
   private String complexDelimiterLevel2;

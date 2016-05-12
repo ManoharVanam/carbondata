@@ -39,7 +39,6 @@ import org.carbondata.core.carbon.CarbonTableIdentifier;
 import org.carbondata.core.carbon.path.CarbonStorePath;
 import org.carbondata.core.carbon.path.CarbonTablePath;
 import org.carbondata.core.constants.CarbonCommonConstants;
-import org.carbondata.core.datastorage.store.filesystem.CarbonFile;
 import org.carbondata.core.file.manager.composite.FileData;
 import org.carbondata.core.file.manager.composite.IFileManagerComposite;
 import org.carbondata.core.file.manager.composite.LoadFolderData;
@@ -83,11 +82,6 @@ public class FileStoreSurrogateKeyGenForCSV extends CarbonCSVBasedDimSurrogateKe
    * LOAD_FOLDER
    */
   private String loadFolderName;
-
-  /**
-   * folderList
-   */
-  private List<CarbonFile> folderList = new ArrayList<CarbonFile>(5);
 
   /**
    * primaryKeyStringArray

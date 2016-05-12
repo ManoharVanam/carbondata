@@ -118,12 +118,10 @@ public class CalculatedMeasureAggregatorImpl implements CalculatedMeasureAggrega
   }
 
   @Override public void agg(MeasureColumnDataChunk newVal, int index) {
-    // TODO Auto-generated method stub
 
   }
 
   @Override public MeasureAggregator getNew() {
-    // TODO Auto-generated method stub
     return null;
   }
 

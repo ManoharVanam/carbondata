@@ -67,7 +67,6 @@ public class PartitionImpl implements Partition {
   }
 
   @Override public List<String> getFilesPath() {
-    // TODO Auto-generated method stub
     return null;
   }
 

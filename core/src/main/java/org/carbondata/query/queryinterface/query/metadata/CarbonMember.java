@@ -32,17 +32,6 @@ public class CarbonMember implements Serializable {
   private Object[] properties;
 
   /**
-   * Constructor that takes filter information for each member.
-   *
-   * @param name
-   * @param properties
-   */
-  public CarbonMember(Object name, Object[] properties) {
-    this.name = name;
-    this.properties = properties;
-  }
-
-  /**
    * @return the name
    */
   public Object getName() {

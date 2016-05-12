@@ -34,10 +34,7 @@ import org.carbondata.core.datastorage.store.compression.ValueCompressionModel;
 import org.carbondata.core.file.manager.composite.IFileManagerComposite;
 import org.carbondata.core.keygenerator.mdkey.NumberCompressor;
 import org.carbondata.core.metadata.BlockletInfoColumnar;
-import org.carbondata.core.util.CarbonMetadataUtil;
 import org.carbondata.core.util.CarbonProperties;
-import org.carbondata.core.writer.CarbonFooterWriter;
-import org.carbondata.format.FileFooter;
 import org.carbondata.processing.store.CarbonDataFileAttributes;
 import org.carbondata.processing.store.writer.exception.CarbonDataWriterException;
 
@@ -473,63 +470,4 @@ public class CarbonFactDataWriterImplForIntIndexAndAggBlock extends AbstractFact
     return info;
   }
 
-  protected int calculateAndSetBlockletMetaSize(NodeHolder nodeHolderInfo) {
-    int metaSize = 0;
-    //measure offset and measure length
-    metaSize += (measureCount * CarbonCommonConstants.INT_SIZE_IN_BYTE) + (measureCount
-        * CarbonCommonConstants.LONG_SIZE_IN_BYTE);
-    // start and end key
-    metaSize += mdkeySize * 2;
-
-    // keyblock length + key offsets + number of tuples+ number of columnar block
-    metaSize += (nodeHolderInfo.getKeyLengths().length * CarbonCommonConstants.INT_SIZE_IN_BYTE) + (
-        nodeHolderInfo.getKeyLengths().length * CarbonCommonConstants.LONG_SIZE_IN_BYTE)
-        + CarbonCommonConstants.INT_SIZE_IN_BYTE + CarbonCommonConstants.INT_SIZE_IN_BYTE;
-    // if sorted or not
-    metaSize += nodeHolderInfo.getIsSortedKeyBlock().length;
-
-    //column min max size
-    //for length of columnMinMax byte array
-    metaSize += CarbonCommonConstants.INT_SIZE_IN_BYTE;
-    for (int i = 0; i < nodeHolderInfo.getColumnMaxData().length; i++) {
-      //length of sub byte array
-      metaSize += CarbonCommonConstants.INT_SIZE_IN_BYTE;
-      metaSize += nodeHolderInfo.getColumnMaxData()[i].length;
-    }
-
-    // key block index length + key block index offset + number of key block
-    metaSize +=
-        (nodeHolderInfo.getKeyBlockIndexLength().length * CarbonCommonConstants.INT_SIZE_IN_BYTE)
-            + (nodeHolderInfo.getKeyBlockIndexLength().length
-            * CarbonCommonConstants.LONG_SIZE_IN_BYTE) + CarbonCommonConstants.INT_SIZE_IN_BYTE;
-
-    // aggregate block length + agg block offsets + number of block aggergated
-    metaSize +=
-        (nodeHolderInfo.getDataIndexMapLength().length * CarbonCommonConstants.INT_SIZE_IN_BYTE) + (
-            nodeHolderInfo.getDataIndexMapLength().length * CarbonCommonConstants.LONG_SIZE_IN_BYTE)
-            + CarbonCommonConstants.INT_SIZE_IN_BYTE;
-    return metaSize;
-  }
-
-  //TODO SIMIAN
-
-  /**
-   * This method will write metadata at the end of file file format in thrift format
-   *
-   * @throws CarbonDataWriterException throw CarbonDataWriterException when problem in writing
-   *                                   the meta data to file
-   */
-  protected void writeleafMetaDataToFile(List<BlockletInfoColumnar> infoList, FileChannel channel)
-      throws CarbonDataWriterException {
-    try {
-      long currentPos = channel.size();
-      CarbonFooterWriter writer = new CarbonFooterWriter(this.fileName);
-      FileFooter convertFileMeta = CarbonMetadataUtil
-          .convertFileFooter(infoList, localCardinality.length, localCardinality,
-              thriftColumnSchemaList);
-      writer.writeFooter(convertFileMeta, currentPos);
-    } catch (IOException e) {
-      throw new CarbonDataWriterException("Problem while writing the carbon file: ", e);
-    }
-  }
 }

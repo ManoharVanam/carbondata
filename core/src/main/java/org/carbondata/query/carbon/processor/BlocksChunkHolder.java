@@ -62,24 +62,10 @@ public class BlocksChunkHolder {
   }
 
   /**
-   * @param dimensionDataChunk the dimensionDataChunk to set
-   */
-  public void setDimensionDataChunk(DimensionColumnDataChunk[] dimensionDataChunk) {
-    this.dimensionDataChunk = dimensionDataChunk;
-  }
-
-  /**
    * @return the measureDataChunk
    */
   public MeasureColumnDataChunk[] getMeasureDataChunk() {
     return measureDataChunk;
-  }
-
-  /**
-   * @param measureDataChunk the measureDataChunk to set
-   */
-  public void setMeasureDataChunk(MeasureColumnDataChunk[] measureDataChunk) {
-    this.measureDataChunk = measureDataChunk;
   }
 
   /**

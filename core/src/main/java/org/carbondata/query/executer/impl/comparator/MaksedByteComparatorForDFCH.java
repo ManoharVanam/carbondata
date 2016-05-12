@@ -45,15 +45,6 @@ public class MaksedByteComparatorForDFCH implements Comparator<DataFileChunkHold
   private byte[] maskedKey;
 
   /**
-   * MaksedByteResultComparator Constructor
-   */
-  public MaksedByteComparatorForDFCH(int[] compareRange, byte sortOrder, byte[] maskedKey) {
-    this.index = compareRange;
-    this.sortOrder = sortOrder;
-    this.maskedKey = maskedKey;
-  }
-
-  /**
    * This method will be used to compare two byte array
    *
    * @param o1

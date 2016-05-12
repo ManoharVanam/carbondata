@@ -31,7 +31,6 @@ public class LessThanEqualToExpression extends BinaryConditionalExpression {
 
   public LessThanEqualToExpression(Expression left, Expression right) {
     super(left, right);
-    // TODO Auto-generated constructor stub
   }
 
   public ExpressionResult evaluate(RowIntf value) throws FilterUnsupportedException {
@@ -76,7 +75,6 @@ public class LessThanEqualToExpression extends BinaryConditionalExpression {
   }
 
   @Override public ExpressionType getFilterExpressionType() {
-    // TODO Auto-generated method stub
     return ExpressionType.LESSTHAN_EQUALTO;
   }
 

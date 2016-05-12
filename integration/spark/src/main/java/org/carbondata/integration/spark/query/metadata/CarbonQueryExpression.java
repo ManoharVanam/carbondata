@@ -58,11 +58,6 @@ public class CarbonQueryExpression implements Serializable {
    */
   private int queryOrder;
 
-  public CarbonQueryExpression(String expression, UsageType usageType) {
-    this.expression = expression;
-    this.usageType = usageType;
-  }
-
   public List<CarbonPlanColumn> getColumns() {
     return columns;
   }

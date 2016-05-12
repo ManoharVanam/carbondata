@@ -223,7 +223,6 @@ public class BlockWriterProcessor implements DataProcessorExt {
 
   @Override public void processRow(ByteArrayWrapper key, MeasureAggregator[] value)
       throws DataProcessorException {
-    // TODO Auto-generated method stub
 
   }
 

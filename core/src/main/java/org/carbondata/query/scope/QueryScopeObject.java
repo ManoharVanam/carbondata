@@ -50,18 +50,4 @@ public class QueryScopeObject implements Serializable {
     this.querySlices = querySlices;
     this.loadNameAndModificationTimeMap = loadNameAndModicationTimeMap;
   }
-
-  /**
-   * Returns the segment cache
-   */
-  public List<InMemoryTable> getQuerySlices() {
-    return querySlices;
-  }
-
-  /**
-   * returns map having segment name as key and modification time as value
-   */
-  public Map<String, Long> getLoadNameAndModificationTimeMap() {
-    return loadNameAndModificationTimeMap;
-  }
 }

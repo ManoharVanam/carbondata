@@ -248,24 +248,6 @@ public class CarbonSliceMergerStep extends BaseStep {
     return super.init(smi, sdi);
   }
 
-  private boolean containsInProgressFiles(File file) {
-    File[] inProgressNewFiles = null;
-    inProgressNewFiles = file.listFiles(new FileFilter() {
-
-      @Override public boolean accept(File file1) {
-        if (file1.getName().endsWith(CarbonCommonConstants.FILE_INPROGRESS_STATUS)) {
-          return true;
-        }
-        return false;
-      }
-    });
-
-    if (inProgressNewFiles.length > 0) {
-      return true;
-    }
-    return false;
-  }
-
   /**
    * Dispose of this step: close files, empty logs, etc.
    *
