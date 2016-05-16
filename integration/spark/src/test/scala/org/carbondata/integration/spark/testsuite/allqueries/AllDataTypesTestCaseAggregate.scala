@@ -29,7 +29,7 @@ import org.scalatest.BeforeAndAfterAll
 
 /**
   * Test Class for all query on multiple datatypes
-  *
+  * Manohar
   */
 class AllDataTypesTestCaseAggregate extends QueryTest with BeforeAndAfterAll {
 
