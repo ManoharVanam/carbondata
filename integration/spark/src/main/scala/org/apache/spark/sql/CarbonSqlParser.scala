@@ -543,21 +543,21 @@ class CarbonSqlParser()
                                                     tableProperties: Map[String, String]):
   (Seq[Field], Seq[String]) = {
     var dimFields: LinkedHashSet[Field] = LinkedHashSet[Field]()
-    var splittedCols: Array[String] = Array[String]()
+    var dictExcludeCols: Array[String] = Array[String]()
     var noDictionaryDims: Seq[String] = Seq[String]()
     var dictIncludeCols: Seq[String] = Seq[String]()
 
     // check any column need to be excluded
     if (tableProperties.get("DICTIONARY_EXCLUDE").isDefined) {
-      val dicExcludeCols: String = tableProperties.get("DICTIONARY_EXCLUDE").get
-      splittedCols = dicExcludeCols.split(',')
-        .map { splittedCol =>
-          if (!fields.exists(x => x.column.equalsIgnoreCase(splittedCol.trim))) {
-            val errormsg = "DICTIONARY_EXCLUDE column: " + splittedCol.trim +
+      dictExcludeCols = tableProperties.get("DICTIONARY_EXCLUDE").get.split(',')
+      dictExcludeCols
+        .map { dictExcludeCol =>
+          if (!fields.exists(x => x.column.equalsIgnoreCase(dictExcludeCol.trim))) {
+            val errormsg = "DICTIONARY_EXCLUDE column: " + dictExcludeCol.trim +
               " is no exist in table. Please check create table statement."
             throw new MalformedCarbonCommandException(errormsg)
           }
-          splittedCol.trim
+          dictExcludeCol.trim
         }
     }
 
@@ -573,7 +573,7 @@ class CarbonSqlParser()
         }
     }
 
-    splittedCols.foreach { dicExcludeCol =>
+    dictExcludeCols.foreach { dicExcludeCol =>
       if (dictIncludeCols.exists(x => x.equalsIgnoreCase(dicExcludeCol))) {
         val errormsg = "DICTIONARY_EXCLUDE can not contain the same column: " + dicExcludeCol +
           " with DICTIONARY_INCLUDE. Please check create table statement."
@@ -582,21 +582,21 @@ class CarbonSqlParser()
     }
 
     // by default consider all String cols as dims and if any dictionary exclude is present then
-    // add it to nodictionarydims list.
+    // add it to noDictionaryDims list. consider all dictionary excludes/include cols as dims
     fields.foreach(field => {
-      if (isDetectAsDimentionDatatype(field.dataType.get)) {
-        if (!splittedCols.isEmpty) {
-           if (splittedCols.toSeq.exists(x => x.equalsIgnoreCase(field.column))) {
-            noDictionaryDims :+= field.column
-          }
-        }
+
+      if (dictExcludeCols.toSeq.exists(x => x.equalsIgnoreCase(field.column))) {
+        noDictionaryDims :+= field.column
         dimFields += field
       }
-      else {
-        // include the other columns into dims
-        fillNonStringDimension(dictIncludeCols, field, dimFields)
+      else if (dictIncludeCols.exists(x => x.equalsIgnoreCase(field.column))) {
+        dimFields += (field)
       }
-    })
+      else if (isDetectAsDimentionDatatype(field.dataType.get)) {
+        dimFields += (field)
+      }
+    }
+    )
 
     (dimFields.toSeq, noDictionaryDims)
   }
@@ -637,24 +637,26 @@ class CarbonSqlParser()
   protected def extractMsrColsFromFields(fields: Seq[Field],
                                          tableProperties: Map[String, String]): Seq[Field] = {
     var msrFields: Seq[Field] = Seq[Field]()
-    var splittedCols: Array[String] = Array[String]()
+    var dictIncludedCols: Array[String] = Array[String]()
+    var dictExcludedCols: Array[String] = Array[String]()
 
-    // check any column need to be excluded
+    // check any column need to be included
     if (None != tableProperties.get("DICTIONARY_INCLUDE")) {
-      val dicIncludeCols: String = tableProperties.get("DICTIONARY_INCLUDE").get
-      splittedCols = dicIncludeCols.split(',')
+      dictIncludedCols = tableProperties.get("DICTIONARY_INCLUDE").get.split(',')
+    }
+
+    // check any column need to be included
+    if (None != tableProperties.get("DICTIONARY_EXCLUDE")) {
+      dictExcludedCols = tableProperties.get("DICTIONARY_EXCLUDE").get.split(',')
     }
 
     // by default consider all non string cols as msrs.
     fields.foreach(field => {
       if (!isDetectAsDimentionDatatype(field.dataType.get)) {
-        if (!splittedCols.isEmpty) {
-          if (!splittedCols.exists(x => x.equalsIgnoreCase(field.column))) {
+          if (!dictIncludedCols.exists(x => x.equalsIgnoreCase(field.column)) &&
+            !dictExcludedCols.exists(x => x.equalsIgnoreCase(field.column))) {
             msrFields :+= field
           }
-        } else {
-          msrFields :+= field
-        }
       }
     })
 
